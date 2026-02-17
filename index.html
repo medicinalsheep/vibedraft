@@ -195,6 +195,7 @@
                         <div class="flex gap-x-3 flex-wrap">
                             <button onclick="validateAndShowErrors()" class="px-4 py-2.5 bg-purple-600/20 hover:bg-purple-600/30 rounded-lg border border-purple-500/50 text-purple-400 text-xs font-medium transition-all duration-200">VALIDATE</button>
                             <button onclick="loadCodeFromTextarea()" class="px-4 py-2.5 bg-emerald-600/20 hover:bg-emerald-600/30 rounded-lg border border-emerald-500/50 text-emerald-400 text-xs font-medium transition-all duration-200">LOAD CODE</button>
+                            <button onclick="copyCodeWithMetadata()" class="px-4 py-2.5 bg-cyan-600/20 hover:bg-cyan-600/30 rounded-lg border border-cyan-500/50 text-cyan-400 text-xs font-medium transition-all duration-200">COPY + META</button>
                             <button onclick="copyCode()" class="px-4 py-2.5 bg-slate-800/50 hover:bg-slate-700/50 rounded-lg border border-slate-700 text-slate-300 text-xs font-medium transition-all duration-200">COPY SVG</button>
                             <button onclick="copyGrokPrompt()" class="px-4 py-2.5 bg-blue-600/20 hover:bg-blue-600/30 rounded-lg border border-blue-500/50 text-blue-400 text-xs font-medium transition-all duration-200">GROK PROMPT</button>
                             <button onclick="loadFromJSON()" class="px-4 py-2.5 bg-green-600/20 hover:bg-green-600/30 rounded-lg border border-green-500/50 text-green-400 text-xs font-medium transition-all duration-200">LOAD JSON</button>
@@ -222,7 +223,7 @@
                                 <textarea id="ai-prompt" placeholder="Example: Create a rectangular plate with 2 holes, dimensions 6 inches wide by 4 inches tall, holes are 1 inch diameter spaced 2 inches apart" class="w-full px-4 py-3 bg-slate-950/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500 resize-none h-24"></textarea>
                             </div>
                             <div class="flex gap-3">
-                                <button onclick="copyAIPrompt()" class="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-semibold text-white transition-all">📋 Copy Prompt for Grok</button>
+                                <button onclick="copyAIPromptWithMetadata()" class="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-semibold text-white transition-all">📋 Copy Prompt + Metadata</button>
                                 <button onclick="copyDirectLink()" class="flex-1 px-4 py-2.5 bg-cyan-600 hover:bg-cyan-500 rounded-lg text-sm font-semibold text-white transition-all">🔗 Copy Link for AI</button>
                             </div>
                         </div>
@@ -414,21 +415,34 @@
         function renderTitleBlock() {const t = document.getElementById('title-block'), title = document.getElementById('meta-title').value, dwg = document.getElementById('meta-dwg').value, rev = document.getElementById('meta-rev').value, mat = document.getElementById('meta-material').value, scale = document.getElementById('meta-scale').value; let logoHtml = ''; if (currentLogo) {logoHtml = `<img src="${currentLogo}" style="height: 60px; object-fit: contain;"/>`;}; t.innerHTML = `<div class="col-span-12 flex justify-between items-start border-b border-slate-300 pb-4"><div><div class="flex items-start gap-4"><div>${logoHtml}</div><div><div class="text-3xl font-bold tracking-tight text-slate-900">${title}</div><div class="text-sm text-slate-600 mt-2">${dwg} • REV ${rev}</div></div></div></div><div class="text-right"><div class="text-xs text-slate-700 font-medium">${mat}</div><div class="text-xs text-slate-700 font-medium mt-3">${scale}</div></div></div><div class="col-span-12 text-[10px] pt-4 text-slate-600 grid grid-cols-3"><div>DRAWN BY: GROK</div><div class="text-center">DATE: ${new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})}</div><div class="text-right">ASME Y14.5</div></div>`;}
         function switchTab(n) {document.querySelectorAll('[id^="tab-"]').forEach(b => b.classList.remove('tab-active')); document.getElementById(`tab-${n}`).classList.add('tab-active'); document.getElementById('viewer-panel').classList.add('hidden'); document.getElementById('code-panel').classList.add('hidden'); document.getElementById('three-panel').classList.add('hidden'); document.getElementById('ai-panel').classList.add('hidden'); document.getElementById('rules-panel').classList.add('hidden'); if (n === 0) document.getElementById('viewer-panel').classList.remove('hidden'); if (n === 1) {document.getElementById('code-panel').classList.remove('hidden'); updateCodePanel();} if (n === 2) {document.getElementById('three-panel').classList.remove('hidden'); initThreeIfNeeded();} if (n === 3) document.getElementById('ai-panel').classList.remove('hidden'); if (n === 4) document.getElementById('rules-panel').classList.remove('hidden');}
 
-        function loadCodeFromTextarea() {const code = document.getElementById('code-text').value.trim(); if (!code) {alert('❌ No code to load. Paste SVG code first.'); return;} if (SVGValidator.validate(code)) {currentSVG = code; renderViewer(); alert('✓ Drawing loaded successfully!'); switchTab(0);} else {alert('❌ Invalid SVG code. Check for errors:\n' + SVGValidator.errors.join('\n'));}}
+        function loadCodeFromTextarea() {const code = document.getElementById('code-text').value.trim(); if (!code) {alert('❌ No code to load. Paste SVG code first.'); return;} if (SVGValidator.validate(code)) {extractAndApplyMetadata(code); currentSVG = code; renderViewer(); alert('✓ Drawing loaded successfully!'); switchTab(0);} else {alert('❌ Invalid SVG code. Check for errors:\n' + SVGValidator.errors.join('\n'));}}
 
-        function copyAIPrompt() {const desc = document.getElementById('ai-prompt').value.trim(); if (!desc) {alert('⚠️ Describe your drawing first'); return;} const prompt = `Create an ASME Y14.5-2018 compliant technical drawing using SVG format.
+        function extractAndApplyMetadata(svgCode) {const titleMatch = svgCode.match(/<!-- VIBEDRAFT_TITLE: (.*?) -->/); const dwiMatch = svgCode.match(/<!-- VIBEDRAFT_NUMBER: (.*?) -->/); const revMatch = svgCode.match(/<!-- VIBEDRAFT_REVISION: (.*?) -->/); const matMatch = svgCode.match(/<!-- VIBEDRAFT_MATERIAL: (.*?) -->/); const scaleMatch = svgCode.match(/<!-- VIBEDRAFT_SCALE: (.*?) -->/); if (titleMatch) document.getElementById('meta-title').value = titleMatch[1]; if (dwiMatch) document.getElementById('meta-dwg').value = dwiMatch[1]; if (revMatch) document.getElementById('meta-rev').value = revMatch[1]; if (matMatch) document.getElementById('meta-material').value = matMatch[1]; if (scaleMatch) document.getElementById('meta-scale').value = scaleMatch[1];}
 
-Description: ${desc}
+        function getMetadataComments() {const title = document.getElementById('meta-title').value; const dwg = document.getElementById('meta-dwg').value; const rev = document.getElementById('meta-rev').value; const mat = document.getElementById('meta-material').value; const scale = document.getElementById('meta-scale').value; return `<!-- VIBEDRAFT_TITLE: ${title} -->\n<!-- VIBEDRAFT_NUMBER: ${dwg} -->\n<!-- VIBEDRAFT_REVISION: ${rev} -->\n<!-- VIBEDRAFT_MATERIAL: ${mat} -->\n<!-- VIBEDRAFT_SCALE: ${scale} -->\n`;}
+
+        function copyCodeWithMetadata() {if (!currentSVG) {alert('⚠️ No drawing to copy'); return;} const metadata = getMetadataComments(); const fullCode = metadata + currentSVG; navigator.clipboard.writeText(fullCode); alert('✓ SVG copied with metadata!\n\nIncludes:\n• Drawing Title\n• Number\n• Revision\n• Material\n• Scale\n\nWhen pasted back, all metadata auto-loads!');}
+
+        function copyAIPromptWithMetadata() {const desc = document.getElementById('ai-prompt').value.trim(); const metadata = getMetadataComments(); const title = document.getElementById('meta-title').value; const dwg = document.getElementById('meta-dwg').value; const rev = document.getElementById('meta-rev').value; if (!desc) {alert('⚠️ Describe your drawing first'); return;} const prompt = `Create an ASME Y14.5-2018 compliant technical drawing using SVG format.
+
+PROJECT METADATA (INCLUDE THESE IN COMMENTS):
+${metadata}
+
+DRAWING DESCRIPTION: ${desc}
+
+TITLE: ${title}
+NUMBER: ${dwg}
+REVISION: ${rev}
 
 Requirements:
 - ASME Y14.5-2018 compliant
+- Include metadata comments at the start
 - Proper dimensions with dashes (stroke-dasharray="12 8")
 - Bold text (font-weight: 600, minimum 32px)
-- Include title block
-- Professional appearance
 - Include all dimensions and GD&T notation
+- Professional appearance
 
-Return ONLY the complete SVG code, no explanation.`; navigator.clipboard.writeText(prompt); alert('✓ AI prompt copied! \n\nPaste into grok.x.ai and it will generate SVG code.\nThen paste the SVG code back in CODE tab and click LOAD CODE.');}
+Return ONLY the complete SVG code with metadata comments at the top, no explanation.`; navigator.clipboard.writeText(prompt); alert('✓ AI prompt copied with metadata!\n\nGrok will include:\n• All project info\n• Drawing title\n• Number & revision\n• Material callout\n• Scale\n\nWhen you paste SVG back, everything auto-updates!');}
 
         function copyDirectLink() {const link = window.location.href; const desc = document.getElementById('ai-prompt').value.trim(); const fullPrompt = `I need you to create a technical drawing using vibedraft:
 
