@@ -41,7 +41,8 @@
                 <button onclick="switchTab(0)" id="tab-0" class="tab-active px-4 py-2 transition-colors duration-200 text-slate-300 hover:text-white">VIEWER</button>
                 <button onclick="switchTab(1)" id="tab-1" class="px-4 py-2 transition-colors duration-200 text-slate-400 hover:text-white">CODE</button>
                 <button onclick="switchTab(2)" id="tab-2" class="px-4 py-2 transition-colors duration-200 text-slate-400 hover:text-white">3D</button>
-                <button onclick="switchTab(3)" id="tab-3" class="px-4 py-2 transition-colors duration-200 text-slate-400 hover:text-white">RULES</button>
+                <button onclick="switchTab(3)" id="tab-3" class="px-4 py-2 transition-colors duration-200 text-slate-400 hover:text-white">AI</button>
+                <button onclick="switchTab(4)" id="tab-4" class="px-4 py-2 transition-colors duration-200 text-slate-400 hover:text-white">RULES</button>
             </div>
         </div>
         <div class="flex items-center gap-x-3">
@@ -193,6 +194,7 @@
                         <h2 class="text-base font-semibold text-slate-100 mb-4">SVG Code</h2>
                         <div class="flex gap-x-3 flex-wrap">
                             <button onclick="validateAndShowErrors()" class="px-4 py-2.5 bg-purple-600/20 hover:bg-purple-600/30 rounded-lg border border-purple-500/50 text-purple-400 text-xs font-medium transition-all duration-200">VALIDATE</button>
+                            <button onclick="loadCodeFromTextarea()" class="px-4 py-2.5 bg-emerald-600/20 hover:bg-emerald-600/30 rounded-lg border border-emerald-500/50 text-emerald-400 text-xs font-medium transition-all duration-200">LOAD CODE</button>
                             <button onclick="copyCode()" class="px-4 py-2.5 bg-slate-800/50 hover:bg-slate-700/50 rounded-lg border border-slate-700 text-slate-300 text-xs font-medium transition-all duration-200">COPY SVG</button>
                             <button onclick="copyGrokPrompt()" class="px-4 py-2.5 bg-blue-600/20 hover:bg-blue-600/30 rounded-lg border border-blue-500/50 text-blue-400 text-xs font-medium transition-all duration-200">GROK PROMPT</button>
                             <button onclick="loadFromJSON()" class="px-4 py-2.5 bg-green-600/20 hover:bg-green-600/30 rounded-lg border border-green-500/50 text-green-400 text-xs font-medium transition-all duration-200">LOAD JSON</button>
@@ -208,6 +210,75 @@
 
             <div id="three-panel" class="flex-1 hidden bg-slate-950 relative rounded-lg m-8">
                 <canvas id="three-canvas" class="w-full h-full rounded-lg"></canvas>
+            </div>
+
+            <div id="ai-panel" class="flex-1 hidden flex-col p-8 bg-slate-900/50 backdrop-blur overflow-y-auto">
+                <div class="max-w-4xl mx-auto w-full space-y-6">
+                    <div>
+                        <h2 class="text-lg font-bold text-white mb-4">🤖 AI Code Generator</h2>
+                        <div class="bg-slate-800/50 border border-slate-700 rounded-lg p-6 space-y-4">
+                            <div>
+                                <label class="text-sm font-medium text-slate-300 block mb-2">Describe Your Drawing</label>
+                                <textarea id="ai-prompt" placeholder="Example: Create a rectangular plate with 2 holes, dimensions 6 inches wide by 4 inches tall, holes are 1 inch diameter spaced 2 inches apart" class="w-full px-4 py-3 bg-slate-950/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500 resize-none h-24"></textarea>
+                            </div>
+                            <div class="flex gap-3">
+                                <button onclick="copyAIPrompt()" class="flex-1 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-semibold text-white transition-all">📋 Copy Prompt for Grok</button>
+                                <button onclick="copyDirectLink()" class="flex-1 px-4 py-2.5 bg-cyan-600 hover:bg-cyan-500 rounded-lg text-sm font-semibold text-white transition-all">🔗 Copy Link for AI</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-base font-semibold text-emerald-400 uppercase tracking-wider mb-4">📌 Workflow: How to Use with AI</h3>
+                        <div class="space-y-3">
+                            <div class="bg-slate-800/30 border border-slate-700 rounded-lg p-4">
+                                <div class="font-medium text-slate-100 mb-2">🔄 Option 1: Prompt Grok & Paste Code</div>
+                                <ol class="text-xs text-slate-400 space-y-1 ml-4 list-decimal">
+                                    <li>Describe drawing above</li>
+                                    <li>Click "Copy Prompt for Grok"</li>
+                                    <li>Go to grok.x.ai and paste</li>
+                                    <li>Grok returns SVG code</li>
+                                    <li>Paste code in CODE tab</li>
+                                    <li>Click "LOAD CODE" button</li>
+                                    <li>Drawing updates instantly!</li>
+                                </ol>
+                            </div>
+
+                            <div class="bg-slate-800/30 border border-slate-700 rounded-lg p-4">
+                                <div class="font-medium text-slate-100 mb-2">⚡ Option 2: Give AI Direct Link (Fastest!)</div>
+                                <ol class="text-xs text-slate-400 space-y-1 ml-4 list-decimal">
+                                    <li>Click "Copy Link for AI"</li>
+                                    <li>Paste link in your AI chat</li>
+                                    <li>Tell AI to use vibedraft tool</li>
+                                    <li>AI generates drawing in vibedraft</li>
+                                    <li>AI exports PDF or SVG</li>
+                                    <li>You get final output!</li>
+                                </ol>
+                            </div>
+
+                            <div class="bg-slate-800/30 border border-slate-700 rounded-lg p-4">
+                                <div class="font-medium text-slate-100 mb-2">💡 Example Prompts for Grok</div>
+                                <div class="text-xs text-slate-400 space-y-2">
+                                    <p><span class="text-emerald-400">✓</span> "Create an ASME-compliant drawing of a rectangular bracket with 4 mounting holes in a square pattern, 2 inches x 2 inches spacing. Include dimensions and GD&T"</p>
+                                    <p><span class="text-emerald-400">✓</span> "Design a cylindrical shaft with a shoulder, 2 inch diameter main body, 1.5 inch shoulder diameter, 5 inches total length. Add all dimensions and material callout"</p>
+                                    <p><span class="text-emerald-400">✓</span> "Make an L-bracket in ASME format with 3 inch vertical leg, 2 inch horizontal leg, 0.5 inch thickness, with 3 mounting holes"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-base font-semibold text-blue-400 uppercase tracking-wider mb-4">🎯 Pro Tips</h3>
+                        <ul class="text-xs text-slate-400 space-y-2">
+                            <li><span class="text-blue-400">1.</span> Be specific: Include dimensions, materials, and features</li>
+                            <li><span class="text-blue-400">2.</span> Request ASME format for professional drawings</li>
+                            <li><span class="text-blue-400">3.</span> Ask for GD&T (geometric dimensioning & tolerancing)</li>
+                            <li><span class="text-blue-400">4.</span> Use Option 2 (direct link) for fastest results</li>
+                            <li><span class="text-blue-400">5.</span> Iteratively improve: Ask Grok to refine the drawing</li>
+                            <li><span class="text-blue-404">6.</span> AI can directly export PDFs - tell it to "Save as PDF"</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
 
             <div id="rules-panel" class="flex-1 hidden flex-col p-8 bg-slate-900/50 backdrop-blur overflow-y-auto">
@@ -341,8 +412,47 @@
         function insertTemplate(n) {if (Templates[n]) {currentSVG = Templates[n](); renderViewer(); switchTab(0);}}
         function renderViewer() {const c = document.getElementById('svg-container'); c.innerHTML = currentSVG; const s = c.querySelector('svg'); if (s) {s.style.width = '820px'; s.style.height = '580px';} renderTitleBlock(); updateCodePanel();}
         function renderTitleBlock() {const t = document.getElementById('title-block'), title = document.getElementById('meta-title').value, dwg = document.getElementById('meta-dwg').value, rev = document.getElementById('meta-rev').value, mat = document.getElementById('meta-material').value, scale = document.getElementById('meta-scale').value; let logoHtml = ''; if (currentLogo) {logoHtml = `<img src="${currentLogo}" style="height: 60px; object-fit: contain;"/>`;}; t.innerHTML = `<div class="col-span-12 flex justify-between items-start border-b border-slate-300 pb-4"><div><div class="flex items-start gap-4"><div>${logoHtml}</div><div><div class="text-3xl font-bold tracking-tight text-slate-900">${title}</div><div class="text-sm text-slate-600 mt-2">${dwg} • REV ${rev}</div></div></div></div><div class="text-right"><div class="text-xs text-slate-700 font-medium">${mat}</div><div class="text-xs text-slate-700 font-medium mt-3">${scale}</div></div></div><div class="col-span-12 text-[10px] pt-4 text-slate-600 grid grid-cols-3"><div>DRAWN BY: GROK</div><div class="text-center">DATE: ${new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})}</div><div class="text-right">ASME Y14.5</div></div>`;}
-        function switchTab(n) {document.querySelectorAll('[id^="tab-"]').forEach(b => b.classList.remove('tab-active')); document.getElementById(`tab-${n}`).classList.add('tab-active'); document.getElementById('viewer-panel').classList.add('hidden'); document.getElementById('code-panel').classList.add('hidden'); document.getElementById('three-panel').classList.add('hidden'); document.getElementById('rules-panel').classList.add('hidden'); if (n === 0) document.getElementById('viewer-panel').classList.remove('hidden'); if (n === 1) {document.getElementById('code-panel').classList.remove('hidden'); updateCodePanel();} if (n === 2) {document.getElementById('three-panel').classList.remove('hidden'); initThreeIfNeeded();} if (n === 3) document.getElementById('rules-panel').classList.remove('hidden');}
-        function updateCodePanel() {document.getElementById('code-text').value = currentSVG || '';}
+        function switchTab(n) {document.querySelectorAll('[id^="tab-"]').forEach(b => b.classList.remove('tab-active')); document.getElementById(`tab-${n}`).classList.add('tab-active'); document.getElementById('viewer-panel').classList.add('hidden'); document.getElementById('code-panel').classList.add('hidden'); document.getElementById('three-panel').classList.add('hidden'); document.getElementById('ai-panel').classList.add('hidden'); document.getElementById('rules-panel').classList.add('hidden'); if (n === 0) document.getElementById('viewer-panel').classList.remove('hidden'); if (n === 1) {document.getElementById('code-panel').classList.remove('hidden'); updateCodePanel();} if (n === 2) {document.getElementById('three-panel').classList.remove('hidden'); initThreeIfNeeded();} if (n === 3) document.getElementById('ai-panel').classList.remove('hidden'); if (n === 4) document.getElementById('rules-panel').classList.remove('hidden');}
+
+        function loadCodeFromTextarea() {const code = document.getElementById('code-text').value.trim(); if (!code) {alert('❌ No code to load. Paste SVG code first.'); return;} if (SVGValidator.validate(code)) {currentSVG = code; renderViewer(); alert('✓ Drawing loaded successfully!'); switchTab(0);} else {alert('❌ Invalid SVG code. Check for errors:\n' + SVGValidator.errors.join('\n'));}}
+
+        function copyAIPrompt() {const desc = document.getElementById('ai-prompt').value.trim(); if (!desc) {alert('⚠️ Describe your drawing first'); return;} const prompt = `Create an ASME Y14.5-2018 compliant technical drawing using SVG format.
+
+Description: ${desc}
+
+Requirements:
+- ASME Y14.5-2018 compliant
+- Proper dimensions with dashes (stroke-dasharray="12 8")
+- Bold text (font-weight: 600, minimum 32px)
+- Include title block
+- Professional appearance
+- Include all dimensions and GD&T notation
+
+Return ONLY the complete SVG code, no explanation.`; navigator.clipboard.writeText(prompt); alert('✓ AI prompt copied! \n\nPaste into grok.x.ai and it will generate SVG code.\nThen paste the SVG code back in CODE tab and click LOAD CODE.');}
+
+        function copyDirectLink() {const link = window.location.href; const desc = document.getElementById('ai-prompt').value.trim(); const fullPrompt = `I need you to create a technical drawing using vibedraft:
+
+Tool Link: ${link}
+
+Drawing Description: ${desc}
+
+Please:
+1. Visit the vibedraft link
+2. Click the AI tab
+3. Load paper size (Tabloid recommended)
+4. Select ASME standards (Standard thickness)
+5. Go to CODE tab, create the drawing as SVG
+6. Export as PDF or SVG using the buttons at top
+7. Send me the final PDF/SVG
+
+The tool handles:
+- Professional ASME formatting
+- Title blocks with your logo
+- All metadata
+- PDF/SVG export
+
+Make it production-ready!`; navigator.clipboard.writeText(fullPrompt); alert('✓ Full instructions copied!\n\nPaste this into your AI chat and it will:\n1. Visit vibedraft\n2. Create your drawing\n3. Export the final PDF/SVG\n\nPerfect for automated workflows!');}
+
         function initThreeIfNeeded() {if (window.threeInitialized) return; window.threeInitialized = true; const c = document.getElementById('three-canvas'), r = new THREE.WebGLRenderer({canvas: c, antialias: true}); r.setSize(window.innerWidth, window.innerHeight); const s = new THREE.Scene(); s.background = new THREE.Color(0x0a1428); const cam = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 10, 2000); cam.position.set(500, 400, 800); const l = new THREE.DirectionalLight(0xffffff, 1.4); l.position.set(600, 900, 700); s.add(l); s.add(new THREE.AmbientLight(0xaaaaaa)); const b = new THREE.Mesh(new THREE.BoxGeometry(420, 120, 520), new THREE.MeshPhongMaterial({color: 0x64748b})); s.add(b); function anim() {requestAnimationFrame(anim); b.rotation.y += 0.0015; r.render(s, cam);} anim();}
         function setUnits(n) {document.getElementById('unit-in').classList.toggle('active', n === 0); document.getElementById('unit-mm').classList.toggle('active', n === 1); document.getElementById('units-label').textContent = n === 0 ? 'INCHES' : 'MILLIMETERS'; currentUnits = n === 0 ? 'inches' : 'mm';}
         function validateDrawing() {renderTitleBlock(); alert('Metadata validated');}
