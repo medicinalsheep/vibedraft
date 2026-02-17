@@ -504,7 +504,7 @@
         function renderTitleBlock() { const t = document.getElementById('title-block'), title = document.getElementById('meta-title').value, dwg = document.getElementById('meta-dwg').value, rev = document.getElementById('meta-rev').value, mat = document.getElementById('meta-material').value, scale = document.getElementById('meta-scale').value, drawnBy = document.getElementById('meta-drawn-by').value; let logoHtml = ''; if (currentLogo) { logoHtml = `<img src="${currentLogo}" style="height: 60px; object-fit: contain;"/>`; }; t.innerHTML = `<div class="col-span-12 flex justify-between items-start border-b border-slate-300 pb-4"><div><div class="flex items-start gap-4"><div>${logoHtml}</div><div><div class="text-3xl font-bold tracking-tight text-slate-900">${title}</div><div class="text-sm text-slate-600 mt-2">${dwg} • REV ${rev}</div></div></div></div><div class="text-right"><div class="text-xs text-slate-700 font-medium">${mat}</div><div class="text-xs text-slate-700 font-medium mt-3">${scale}</div></div></div><div class="col-span-12 text-[10px] pt-4 text-slate-600 grid grid-cols-3"><div>DRAWN BY: ${drawnBy}</div><div class="text-center">DATE: ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div><div class="text-right">ASME Y14.5</div></div>`; }
         function switchTab(n) { document.querySelectorAll('[id^="tab-"]').forEach(b => b.classList.remove('tab-active')); document.getElementById(`tab-${n}`).classList.add('tab-active'); document.getElementById('viewer-panel').classList.add('hidden'); document.getElementById('code-panel').classList.add('hidden'); document.getElementById('three-panel').classList.add('hidden'); document.getElementById('ai-panel').classList.add('hidden'); document.getElementById('rules-panel').classList.add('hidden'); if (n === 0) document.getElementById('viewer-panel').classList.remove('hidden'); if (n === 1) { document.getElementById('code-panel').classList.remove('hidden'); updateCodePanel(); } if (n === 2) { document.getElementById('three-panel').classList.remove('hidden'); initThreeIfNeeded(); } if (n === 3) document.getElementById('ai-panel').classList.remove('hidden'); if (n === 4) document.getElementById('rules-panel').classList.remove('hidden'); }
 
-        function loadCodeFromTextarea() { const code = document.getElementById('code-text').value.trim(); if (!code) { alert('❌ No code to load. Paste SVG code first.'); return; } if (SVGValidator.validate(code)) { extractAndApplyMetadata(code); currentSVG = code; renderViewer(); alert('✓ Drawing loaded successfully!'); switchTab(0); } else { alert('❌ Invalid SVG code. Check for errors:\n' + SVGValidator.errors.join('\n')); } }
+        function loadCodeFromTextarea() { const code = document.getElementById('code-text').value.trim(); if (!code) { alert('❌ No code to load. Paste SVG code first.'); return; } if (SVGValidator.validate(code)) { extractAndApplyMetadata(code); const titleVal = document.getElementById('meta-title').value; const dgrVal = document.getElementById('meta-dwg').value; if (titleVal || dgrVal) { alert('✓ Drawing loaded successfully!\n\nMetadata extracted:\n• Title: ' + (titleVal || '[not found in comments]') + '\n• Number: ' + (dgrVal || '[not found in comments]') + '\n\nTip: Make sure Grok includes metadata comments at the TOP of SVG (before <svg>):\n<!-- VIBEDRAFT_TITLE: ... -->\n<!-- VIBEDRAFT_NUMBER: ... -->\netc.'); } else { alert('⚠️ Drawing loaded but NO metadata comments found!\n\nMetadata fields are still empty. This means the SVG code from Grok didn\'t include the required comments.\n\nTo fix:\n1. Check the SVG code - look for <!-- VIBEDRAFT_* --> at the TOP\n2. If missing, ask Grok to include metadata comments\n3. Or manually fill in Title, Number, Revision in the sidebar\n\nMetadata comments should look like:\n<!-- VIBEDRAFT_TITLE: BRACKET -->\n<!-- VIBEDRAFT_NUMBER: MB-001 -->\netc.'); } currentSVG = code; renderViewer(); switchTab(0); } else { alert('❌ Invalid SVG code. Check for errors:\n' + SVGValidator.errors.join('\n')); } }
 
         function extractAndApplyMetadata(svgCode) { const titleMatch = svgCode.match(/<!-- VIBEDRAFT_TITLE: (.*?) -->/); const dwiMatch = svgCode.match(/<!-- VIBEDRAFT_NUMBER: (.*?) -->/); const revMatch = svgCode.match(/<!-- VIBEDRAFT_REVISION: (.*?) -->/); const matMatch = svgCode.match(/<!-- VIBEDRAFT_MATERIAL: (.*?) -->/); const scaleMatch = svgCode.match(/<!-- VIBEDRAFT_SCALE: (.*?) -->/); const drawnByMatch = svgCode.match(/<!-- VIBEDRAFT_DRAWN_BY: (.*?) -->/); const orientMatch = svgCode.match(/<!-- VIBEDRAFT_ORIENTATION: (.*?) -->/); if (titleMatch) document.getElementById('meta-title').value = titleMatch[1]; if (dwiMatch) document.getElementById('meta-dwg').value = dwiMatch[1]; if (revMatch) document.getElementById('meta-rev').value = revMatch[1]; if (matMatch) document.getElementById('meta-material').value = matMatch[1]; if (scaleMatch) document.getElementById('meta-scale').value = scaleMatch[1]; if (drawnByMatch) document.getElementById('meta-drawn-by').value = drawnByMatch[1]; if (orientMatch) document.getElementById('meta-orientation').value = orientMatch[1]; }
 
@@ -513,9 +513,11 @@
         function copyCodeWithMetadata() { if (!currentSVG) { alert('⚠️ No drawing to copy'); return; } const metadata = getMetadataComments(); const fullCode = metadata + currentSVG; navigator.clipboard.writeText(fullCode); alert('✓ SVG copied with metadata!\n\nIncludes:\n• Drawing Title\n• Number\n• Revision\n• Material\n• Scale\n\nWhen pasted back, all metadata auto-loads!'); }
 
         function copyAIPromptWithMetadata() {
-            const desc = document.getElementById('ai-prompt').value.trim(); const metadata = getMetadataComments(); const title = document.getElementById('meta-title').value; const dwg = document.getElementById('meta-dwg').value; const rev = document.getElementById('meta-rev').value; const drawnBy = document.getElementById('meta-drawn-by').value; const orient = document.getElementById('meta-orientation').value; if (!desc) { alert('⚠️ Describe your drawing first'); return; } const prompt = `Create an ASME Y14.5-2018 compliant technical drawing using SVG format.
+            const desc = document.getElementById('ai-prompt').value.trim(); const metadata = getMetadataComments(); const title = document.getElementById('meta-title').value; const dwg = document.getElementById('meta-dwg').value; const rev = document.getElementById('meta-rev').value; const drawnBy = document.getElementById('meta-drawn-by').value; const orient = document.getElementById('meta-orientation').value; const scale = document.getElementById('meta-scale').value || '1:1'; const material = document.getElementById('meta-material').value; if (!desc) { alert('⚠️ Describe your drawing first'); return; } const prompt = `Create an ASME Y14.5-2018 compliant technical drawing using SVG format.
 
-PROJECT METADATA (INCLUDE THESE IN COMMENTS):
+*** CRITICAL: INCLUDE METADATA COMMENTS ***
+These MUST be at the TOP before <svg>:
+
 ${metadata}
 
 DRAWING SPECIFICATION:
@@ -523,38 +525,32 @@ Title: ${title}
 Number: ${dwg}
 Revision: ${rev}
 Drawn By: ${drawnBy}
-Orientation: ${orient}
 Scale: ${scale}
 Material: ${material}
+Orientation: ${orient}
 
 DESCRIPTION: ${desc}
 
+REQUIRED RETURN FORMAT:
+<!-- VIBEDRAFT_TITLE: ${title} -->
+<!-- VIBEDRAFT_NUMBER: ${dwg} -->
+<!-- VIBEDRAFT_REVISION: ${rev} -->
+<!-- VIBEDRAFT_MATERIAL: ${material} -->
+<!-- VIBEDRAFT_SCALE: ${scale} -->
+<!-- VIBEDRAFT_DRAWN_BY: ${drawnBy} -->
+<!-- VIBEDRAFT_ORIENTATION: ${orient} -->
+<svg>
+[drawing]
+</svg>
+
 CRITICAL REQUIREMENTS:
-1. SCALE VERIFICATION - ALL DIMENSIONS MUST MATCH SCALE "${scale}"
-   - If scale 1:1: dimensions are actual size
-   - If scale 1:2: dimensions are 2x actual size
-   - If scale 2:1: dimensions are 1/2 actual size
-   - VERIFY SVG coordinates match scaled dimensions correctly
-   - Use correct dimensional notation matching scale
+1. Scale: ${scale} - ALL dimensions match
+2. Tolerances: ±0.005" (note on drawing)
+3. Leaders on ALL annotations
+4. NO overlapping annotations
+5. ASME Y14.5-2018 compliant
 
-2. ASSUMED TOLERANCES (if not otherwise specified):
-   - General tolerances per ASME Y14.5-2018
-   - Linear dimensions: ±0.005" (unless otherwise specified)
-   - Angular dimensions: ±0.5°
-   - For ${material}: Use ±0.005" standard
-   - ADD NOTE ON DRAWING: "UNLESS OTHERWISE SPECIFIED: TOLERANCES ±0.005""
-
-3. ASME REQUIREMENTS:
-   - ASME Y14.5-2018 compliant
-   - Include metadata comments at the start
-   - Use ${orient} orientation
-   - Proper dimensions with dashes (stroke-dasharray="12 8")
-   - Bold text (font-weight: 600, minimum 32px)
-   - Include all dimensions and GD&T notation
-   - Dimension values MUST MATCH the scale
-   - Professional appearance
-
-Return ONLY the complete SVG code with metadata comments at the top, no explanation.`; navigator.clipboard.writeText(prompt); alert('✓ AI prompt copied with SCALE & TOLERANCE requirements!\n\nIncludes:\n• Scale: ' + scale + ' (CRITICAL!)\n• Tolerances: ±0.005" (assumed)\n• Material: ' + material + '\n• All dimensional requirements\n\nAI will create drawing that:\n✓ Dimensions match scale exactly\n✓ Includes tolerance note\n✓ ASME Y14.5-2018 compliant');
+Return ONLY SVG with metadata comments first.`; navigator.clipboard.writeText(prompt); alert('✓ Prompt copied!\n\nTo get fields to auto-update:\n1. Copy SVG from Grok\n2. Paste in CODE tab\n3. Click LOAD CODE\n\n✓ Title/Number will auto-load!\n\nIf not:\n• SVG needs metadata comments\n• Ask Grok: "Include VIBEDRAFT metadata comments"\n• Or fill sidebar manually');
         }
 
         function copyDirectLink() {
@@ -589,7 +585,7 @@ Make it production-ready!`; navigator.clipboard.writeText(fullPrompt); alert('�
         function newDrawing() { if (confirm('Start new drawing?')) { currentSVG = Templates.simple_rect(); renderViewer(); switchTab(0); } }
         function saveDrawing() { if (!validateRequired()) return; const d = { svg: currentSVG, logo: currentLogo, meta: { title: document.getElementById('meta-title').value, dwg: document.getElementById('meta-dwg').value, rev: document.getElementById('meta-rev').value, material: document.getElementById('meta-material').value, scale: document.getElementById('meta-scale').value, drawnBy: document.getElementById('meta-drawn-by').value, orientation: document.getElementById('meta-orientation').value, paperSize: document.getElementById('paper-size').value, dimThickness: document.getElementById('dim-thickness').value, textHeight: document.getElementById('text-height').value } }; localStorage.setItem('vibedraft_current', JSON.stringify(d)); alert('✓ Drawing saved to browser'); }
         function exportSVG() { if (!validateRequired()) return; const b = new Blob([currentSVG], { type: 'image/svg+xml' }), u = URL.createObjectURL(b), a = document.createElement('a'); a.href = u; a.download = `${document.getElementById('meta-dwg').value || 'vibedraft'}.svg`; a.click(); }
-        async function exportPDF() { if (!validateBeforeExport()) return; const orientation = document.getElementById('meta-orientation').value || 'landscape'; const pageSize = document.getElementById('paper-size').value || 'a4'; const j = window.jspdf; const pdfOrientation = orientation === 'landscape' ? 'l' : 'p'; const d = new j.jsPDF(pdfOrientation, 'mm', pageSize); const pageWidth = d.internal.pageSize.getWidth(); const pageHeight = d.internal.pageSize.getHeight(); const title = document.getElementById('meta-title').value; const number = document.getElementById('meta-dwg').value; const rev = document.getElementById('meta-rev').value; const material = document.getElementById('meta-material').value; const scale = document.getElementById('meta-scale').value; const drawnBy = document.getElementById('meta-drawn-by').value; const logoSrc = currentLogo; let yPosition = 10; if (logoSrc || title) { const logoHeight = 12; if (logoSrc) { d.addImage(logoSrc, 'PNG', 10, yPosition, 20, logoHeight); } d.setFontSize(16); d.setFont(undefined, 'bold'); d.text(title || '', logoSrc ? 35 : 10, yPosition + 4); d.setFontSize(9); d.setFont(undefined, 'normal'); d.text(`${number} • REV ${rev}`, logoSrc ? 35 : 10, yPosition + 10); yPosition += logoHeight + 5; d.setLineWidth(0.5); d.line(10, yPosition, pageWidth - 10, yPosition); yPosition += 3; const metaLineHeight = 4; d.setFontSize(7); d.text(`Material: ${material}`, pageWidth - 60, yPosition); d.text(`Scale: ${scale}`, pageWidth - 30, yPosition); d.text(`Drawn By: ${drawnBy}`, 10, yPosition); yPosition += metaLineHeight + 3; } const c = document.getElementById('svg-wrapper'); const cv = await html2canvas(c, { scale: 3, backgroundColor: '#ffffff' }); const maxWidth = pageWidth - 20; const maxHeight = pageHeight - yPosition - 10; const imgAspect = cv.width / cv.height; const maxAspect = maxWidth / maxHeight; let imgWidth, imgHeight; if (imgAspect > maxAspect) { imgWidth = maxWidth; imgHeight = maxWidth / imgAspect; } else { imgHeight = maxHeight; imgWidth = maxHeight * imgAspect; } const xCenter = (pageWidth - imgWidth) / 2; d.addImage(cv.toDataURL('image/png'), 'PNG', xCenter, yPosition, imgWidth, imgHeight); d.save(`${number || 'vibedraft'}.pdf`); }        function copyCode() { if (!currentSVG) { alert('⚠️ No drawing to copy'); return; } navigator.clipboard.writeText(currentSVG); alert('✓ SVG copied to clipboard'); }
+        async function exportPDF() { if (!validateBeforeExport()) return; const orientation = document.getElementById('meta-orientation').value || 'landscape'; const pageSize = document.getElementById('paper-size').value || 'a4'; const j = window.jspdf; const pdfOrientation = orientation === 'landscape' ? 'l' : 'p'; const d = new j.jsPDF(pdfOrientation, 'mm', pageSize); const pageWidth = d.internal.pageSize.getWidth(); const pageHeight = d.internal.pageSize.getHeight(); const title = document.getElementById('meta-title').value; const number = document.getElementById('meta-dwg').value; const rev = document.getElementById('meta-rev').value; const material = document.getElementById('meta-material').value; const scale = document.getElementById('meta-scale').value; const drawnBy = document.getElementById('meta-drawn-by').value; const logoSrc = currentLogo; let yPosition = 10; if (logoSrc || title) { const logoHeight = 12; if (logoSrc) { d.addImage(logoSrc, 'PNG', 10, yPosition, 20, logoHeight); } d.setFontSize(16); d.setFont(undefined, 'bold'); d.text(title || '', logoSrc ? 35 : 10, yPosition + 4); d.setFontSize(9); d.setFont(undefined, 'normal'); d.text(`${number} • REV ${rev}`, logoSrc ? 35 : 10, yPosition + 10); yPosition += logoHeight + 5; d.setLineWidth(0.5); d.line(10, yPosition, pageWidth - 10, yPosition); yPosition += 3; const metaLineHeight = 4; d.setFontSize(7); d.text(`Material: ${material}`, pageWidth - 60, yPosition); d.text(`Scale: ${scale}`, pageWidth - 30, yPosition); d.text(`Drawn By: ${drawnBy}`, 10, yPosition); yPosition += metaLineHeight + 3; } const c = document.getElementById('svg-wrapper'); const cv = await html2canvas(c, { scale: 3, backgroundColor: '#ffffff' }); const maxWidth = pageWidth - 20; const maxHeight = pageHeight - yPosition - 10; const imgAspect = cv.width / cv.height; const maxAspect = maxWidth / maxHeight; let imgWidth, imgHeight; if (imgAspect > maxAspect) { imgWidth = maxWidth; imgHeight = maxWidth / imgAspect; } else { imgHeight = maxHeight; imgWidth = maxHeight * imgAspect; } const xCenter = (pageWidth - imgWidth) / 2; d.addImage(cv.toDataURL('image/png'), 'PNG', xCenter, yPosition, imgWidth, imgHeight); d.save(`${number || 'vibedraft'}.pdf`); } function copyCode() { if (!currentSVG) { alert('⚠️ No drawing to copy'); return; } navigator.clipboard.writeText(currentSVG); alert('✓ SVG copied to clipboard'); }
         function copyGrokPrompt() { if (!validateRequired()) return; const set = getASMESettings(); const dims = document.getElementById('dim-thickness').value; const p = `vibedraft v0.1 Drawing\nPaper: ${document.getElementById('paper-size').value}\nDim Lines: ${dims}px thickness\nText: ${set.textHeight}px height\nUnits: ${currentUnits}\n\nASME Y14.5-2018 Compliance Requested\n\n\`\`\`svg\n${currentSVG}\n\`\`\`\n\nImprove with proper dimensioning, GD&T controls, and better layout. Return ONLY the SVG code.`; navigator.clipboard.writeText(p); alert('✓ Grok prompt copied with ASME settings'); }
         function loadFromJSON() { const j = prompt('Paste JSON data:'); if (!j) return; try { const d = JSON.parse(j); if (d.svg) { currentSVG = d.svg; if (d.logo) { currentLogo = d.logo; const preview = document.getElementById('logo-preview'); if (currentLogo) preview.innerHTML = `<img src="${currentLogo}" style="max-height: 100%; max-width: 100%; object-fit: contain;">`; }; if (d.meta) { document.getElementById('meta-title').value = d.meta.title || ''; document.getElementById('meta-dwg').value = d.meta.dwg || ''; document.getElementById('meta-rev').value = d.meta.rev || ''; document.getElementById('meta-material').value = d.meta.material || ''; document.getElementById('meta-scale').value = d.meta.scale || ''; document.getElementById('meta-drawn-by').value = d.meta.drawnBy || ''; document.getElementById('meta-orientation').value = d.meta.orientation || 'landscape'; if (d.meta.paperSize) { document.getElementById('paper-size').value = d.meta.paperSize; changePaperSize(); } if (d.meta.dimThickness) document.getElementById('dim-thickness').value = d.meta.dimThickness; if (d.meta.textHeight) document.getElementById('text-height').value = d.meta.textHeight; } renderViewer(); switchTab(0); } } catch (e) { alert('❌ Invalid JSON format'); } }
 
