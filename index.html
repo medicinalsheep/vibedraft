@@ -524,19 +524,37 @@ Number: ${dwg}
 Revision: ${rev}
 Drawn By: ${drawnBy}
 Orientation: ${orient}
+Scale: ${scale}
+Material: ${material}
 
 DESCRIPTION: ${desc}
 
-Requirements:
-- ASME Y14.5-2018 compliant
-- Include metadata comments at the start
-- Use ${orient} orientation
-- Proper dimensions with dashes (stroke-dasharray="12 8")
-- Bold text (font-weight: 600, minimum 32px)
-- Include all dimensions and GD&T notation
-- Professional appearance
+CRITICAL REQUIREMENTS:
+1. SCALE VERIFICATION - ALL DIMENSIONS MUST MATCH SCALE "${scale}"
+   - If scale 1:1: dimensions are actual size
+   - If scale 1:2: dimensions are 2x actual size
+   - If scale 2:1: dimensions are 1/2 actual size
+   - VERIFY SVG coordinates match scaled dimensions correctly
+   - Use correct dimensional notation matching scale
 
-Return ONLY the complete SVG code with metadata comments at the top, no explanation.`; navigator.clipboard.writeText(prompt); alert('✓ AI prompt copied with full metadata!\n\nIncludes:\n• Title: ' + title + '\n• Number: ' + dwg + '\n• Revision: ' + rev + '\n• Drawn By: ' + drawnBy + '\n• Orientation: ' + orient + '\n\nWhen you paste SVG back, everything auto-updates!');
+2. ASSUMED TOLERANCES (if not otherwise specified):
+   - General tolerances per ASME Y14.5-2018
+   - Linear dimensions: ±0.005" (unless otherwise specified)
+   - Angular dimensions: ±0.5°
+   - For ${material}: Use ±0.005" standard
+   - ADD NOTE ON DRAWING: "UNLESS OTHERWISE SPECIFIED: TOLERANCES ±0.005""
+
+3. ASME REQUIREMENTS:
+   - ASME Y14.5-2018 compliant
+   - Include metadata comments at the start
+   - Use ${orient} orientation
+   - Proper dimensions with dashes (stroke-dasharray="12 8")
+   - Bold text (font-weight: 600, minimum 32px)
+   - Include all dimensions and GD&T notation
+   - Dimension values MUST MATCH the scale
+   - Professional appearance
+
+Return ONLY the complete SVG code with metadata comments at the top, no explanation.`; navigator.clipboard.writeText(prompt); alert('✓ AI prompt copied with SCALE & TOLERANCE requirements!\n\nIncludes:\n• Scale: ' + scale + ' (CRITICAL!)\n• Tolerances: ±0.005" (assumed)\n• Material: ' + material + '\n• All dimensional requirements\n\nAI will create drawing that:\n✓ Dimensions match scale exactly\n✓ Includes tolerance note\n✓ ASME Y14.5-2018 compliant');
         }
 
         function copyDirectLink() {
