@@ -70,16 +70,26 @@
                 <div class="uppercase text-xs tracking-widest text-slate-400 font-semibold mb-4">Project Info</div>
                 <div class="space-y-4">
                     <div>
-                        <label class="text-xs text-slate-400 font-medium block mb-2">Drawing Title</label>
-                        <input type="text" id="meta-title" value="BRACKET ASSEMBLY" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                        <label class="text-xs text-slate-400 font-medium block mb-2">Company Logo</label>
+                        <label class="block">
+                            <div class="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-xs text-slate-400 hover:border-blue-500 cursor-pointer transition-colors text-center">
+                                📷 Upload Logo
+                            </div>
+                            <input type="file" id="logo-upload" accept="image/*" onchange="uploadLogo()" style="display:none;">
+                        </label>
+                        <div id="logo-preview" class="mt-2 h-12 bg-slate-800/50 border border-slate-700 rounded-lg flex items-center justify-center text-xs text-slate-500"></div>
                     </div>
                     <div>
-                        <label class="text-xs text-slate-400 font-medium block mb-2">Drawing Number</label>
-                        <input type="text" id="meta-dwg" value="VD-2026-088" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                        <label class="text-xs text-slate-400 font-medium block mb-2">Drawing Title <span class="text-red-400">*</span></label>
+                        <input type="text" id="meta-title" value="BRACKET ASSEMBLY" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
                     </div>
                     <div>
-                        <label class="text-xs text-slate-400 font-medium block mb-2">Revision</label>
-                        <input type="text" id="meta-rev" value="C" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                        <label class="text-xs text-slate-400 font-medium block mb-2">Drawing Number <span class="text-red-400">*</span></label>
+                        <input type="text" id="meta-dwg" value="VD-2026-088" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 font-medium block mb-2">Revision <span class="text-red-400">*</span></label>
+                        <input type="text" id="meta-rev" value="C" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
                     </div>
                     <div>
                         <label class="text-xs text-slate-400 font-medium block mb-2">Material</label>
@@ -253,7 +263,7 @@
     <script>
         tailwind.config = { content: [] };
 
-        let currentSVG = '', currentUnits = 'inches', zoomLevel = 1, isDragging = false, startPanX = 0, startPanY = 0;
+        let currentSVG = '', currentUnits = 'inches', zoomLevel = 1, isDragging = false, startPanX = 0, startPanY = 0, currentLogo = '';
 
         const PaperSizes = {
             letter: { width: 816, height: 1056, name: "Letter (8.5 x 11\")" },
@@ -262,6 +272,47 @@
             A3: { width: 1123, height: 1587, name: "A3 (297 x 420mm)" },
             custom: { width: 820, height: 580, name: "Custom" }
         };
+
+        function uploadLogo() {
+            const input = document.getElementById('logo-upload');
+            if (!input.files[0]) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentLogo = e.target.result;
+                const preview = document.getElementById('logo-preview');
+                preview.innerHTML = `<img src="${currentLogo}" style="max-height: 100%; max-width: 100%; object-fit: contain;">`;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        function validateRequired() {
+            const title = document.getElementById('meta-title').value.trim();
+            const dwg = document.getElementById('meta-dwg').value.trim();
+            const rev = document.getElementById('meta-rev').value.trim();
+            const missing = [];
+            if (!title) missing.push('Drawing Title');
+            if (!dwg) missing.push('Drawing Number');
+            if (!rev) missing.push('Revision');
+            if (missing.length > 0) {
+                alert(`⚠️ Missing required fields:\n• ${missing.join('\n• ')}\n\nThese are needed for professional drawings.`);
+                return false;
+            }
+            return true;
+        }
+
+        function validateBeforeExport() {
+            if (!validateRequired()) return false;
+            const title = document.getElementById('meta-title').value.trim();
+            if (title === '') {
+                alert('⚠️ Drawing Title is required for PDF export');
+                return false;
+            }
+            if (!currentSVG) {
+                alert('⚠️ No drawing found. Please create or load a drawing first.');
+                return false;
+            }
+            return true;
+        }
 
         function changePaperSize() {
             const size = document.getElementById('paper-size').value;
@@ -289,7 +340,7 @@
 
         function insertTemplate(n) {if (Templates[n]) {currentSVG = Templates[n](); renderViewer(); switchTab(0);}}
         function renderViewer() {const c = document.getElementById('svg-container'); c.innerHTML = currentSVG; const s = c.querySelector('svg'); if (s) {s.style.width = '820px'; s.style.height = '580px';} renderTitleBlock(); updateCodePanel();}
-        function renderTitleBlock() {const t = document.getElementById('title-block'), title = document.getElementById('meta-title').value, dwg = document.getElementById('meta-dwg').value, rev = document.getElementById('meta-rev').value, mat = document.getElementById('meta-material').value, scale = document.getElementById('meta-scale').value; t.innerHTML = `<div class="col-span-12 flex justify-between items-start border-b border-slate-300 pb-4"><div><div class="text-3xl font-bold tracking-tight text-slate-900">${title}</div><div class="text-sm text-slate-600 mt-2">${dwg} • REV ${rev}</div></div><div class="text-right"><div class="text-xs text-slate-700 font-medium">${mat}</div><div class="text-xs text-slate-700 font-medium mt-3">${scale}</div></div></div><div class="col-span-12 text-[10px] pt-4 text-slate-600 grid grid-cols-3"><div>DRAWN BY: GROK</div><div class="text-center">DATE: ${new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})}</div><div class="text-right">ASME Y14.5</div></div>`;}
+        function renderTitleBlock() {const t = document.getElementById('title-block'), title = document.getElementById('meta-title').value, dwg = document.getElementById('meta-dwg').value, rev = document.getElementById('meta-rev').value, mat = document.getElementById('meta-material').value, scale = document.getElementById('meta-scale').value; let logoHtml = ''; if (currentLogo) {logoHtml = `<img src="${currentLogo}" style="height: 60px; object-fit: contain;"/>`;}; t.innerHTML = `<div class="col-span-12 flex justify-between items-start border-b border-slate-300 pb-4"><div><div class="flex items-start gap-4"><div>${logoHtml}</div><div><div class="text-3xl font-bold tracking-tight text-slate-900">${title}</div><div class="text-sm text-slate-600 mt-2">${dwg} • REV ${rev}</div></div></div></div><div class="text-right"><div class="text-xs text-slate-700 font-medium">${mat}</div><div class="text-xs text-slate-700 font-medium mt-3">${scale}</div></div></div><div class="col-span-12 text-[10px] pt-4 text-slate-600 grid grid-cols-3"><div>DRAWN BY: GROK</div><div class="text-center">DATE: ${new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})}</div><div class="text-right">ASME Y14.5</div></div>`;}
         function switchTab(n) {document.querySelectorAll('[id^="tab-"]').forEach(b => b.classList.remove('tab-active')); document.getElementById(`tab-${n}`).classList.add('tab-active'); document.getElementById('viewer-panel').classList.add('hidden'); document.getElementById('code-panel').classList.add('hidden'); document.getElementById('three-panel').classList.add('hidden'); document.getElementById('rules-panel').classList.add('hidden'); if (n === 0) document.getElementById('viewer-panel').classList.remove('hidden'); if (n === 1) {document.getElementById('code-panel').classList.remove('hidden'); updateCodePanel();} if (n === 2) {document.getElementById('three-panel').classList.remove('hidden'); initThreeIfNeeded();} if (n === 3) document.getElementById('rules-panel').classList.remove('hidden');}
         function updateCodePanel() {document.getElementById('code-text').value = currentSVG || '';}
         function initThreeIfNeeded() {if (window.threeInitialized) return; window.threeInitialized = true; const c = document.getElementById('three-canvas'), r = new THREE.WebGLRenderer({canvas: c, antialias: true}); r.setSize(window.innerWidth, window.innerHeight); const s = new THREE.Scene(); s.background = new THREE.Color(0x0a1428); const cam = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 10, 2000); cam.position.set(500, 400, 800); const l = new THREE.DirectionalLight(0xffffff, 1.4); l.position.set(600, 900, 700); s.add(l); s.add(new THREE.AmbientLight(0xaaaaaa)); const b = new THREE.Mesh(new THREE.BoxGeometry(420, 120, 520), new THREE.MeshPhongMaterial({color: 0x64748b})); s.add(b); function anim() {requestAnimationFrame(anim); b.rotation.y += 0.0015; r.render(s, cam);} anim();}
@@ -297,13 +348,13 @@
         function validateDrawing() {renderTitleBlock(); alert('Metadata validated');}
         function validateAndShowErrors() {const s = document.getElementById('code-text').value, v = SVGValidator.validate(s), p = document.getElementById('validation-panel'), o = document.getElementById('validation-output'); if (v) {o.innerHTML = '<div class="success-badge p-2 rounded">✓ Valid SVG</div>';} else {let h = '<div class="space-y-1">'; SVGValidator.errors.forEach(e => {h += `<div class="error-badge p-2 rounded text-xs">${e}</div>`;}); h += '</div>'; o.innerHTML = h;} p.classList.remove('hidden');}
         function newDrawing() {if (confirm('Start new drawing?')) {currentSVG = Templates.simple_rect(); renderViewer(); switchTab(0);}}
-        function saveDrawing() {const d = {svg: currentSVG, meta: {title: document.getElementById('meta-title').value, dwg: document.getElementById('meta-dwg').value, rev: document.getElementById('meta-rev').value, material: document.getElementById('meta-material').value, scale: document.getElementById('meta-scale').value, paperSize: document.getElementById('paper-size').value, dimThickness: document.getElementById('dim-thickness').value, textHeight: document.getElementById('text-height').value}}; localStorage.setItem('vibedraft_current', JSON.stringify(d)); alert('Saved to browser');}
-        function exportSVG() {const b = new Blob([currentSVG], {type: 'image/svg+xml'}), u = URL.createObjectURL(b), a = document.createElement('a'); a.href = u; a.download = 'vibedraft.svg'; a.click();}
-        async function exportPDF() {const j = window.jspdf, d = new j.jsPDF('p', 'mm', 'a4'), c = document.getElementById('svg-wrapper'), cv = await html2canvas(c, {scale: 3}); d.addImage(cv.toDataURL('image/png'), 'PNG', 15, 20, 180, 130); d.save('vibedraft.pdf');}
-        function copyCode() {navigator.clipboard.writeText(currentSVG); alert('Copied to clipboard');}
-        function copyGrokPrompt() {const set = getASMESettings(); const dims = document.getElementById('dim-thickness').value; const p = `vibedraft v0.1 Drawing\nPaper: ${document.getElementById('paper-size').value}\nDim Lines: ${dims}px thickness\nText: ${set.textHeight}px height\nUnits: ${currentUnits}\n\nASME Y14.5-2018 Compliance Requested\n\n\`\`\`svg\n${currentSVG}\n\`\`\`\n\nImprove with proper dimensioning, GD&T controls, and better layout. Return ONLY the SVG code.`; navigator.clipboard.writeText(p); alert('Grok prompt copied with ASME settings');}
-        function loadFromJSON() {const j = prompt('Paste JSON data:'); if (!j) return; try {const d = JSON.parse(j); if (d.svg) {currentSVG = d.svg; if (d.meta) {document.getElementById('meta-title').value = d.meta.title || ''; document.getElementById('meta-dwg').value = d.meta.dwg || ''; document.getElementById('meta-rev').value = d.meta.rev || ''; document.getElementById('meta-material').value = d.meta.material || ''; document.getElementById('meta-scale').value = d.meta.scale || '1:1'; if (d.meta.paperSize) {document.getElementById('paper-size').value = d.meta.paperSize; changePaperSize();} if (d.meta.dimThickness) document.getElementById('dim-thickness').value = d.meta.dimThickness; if (d.meta.textHeight) document.getElementById('text-height').value = d.meta.textHeight;} renderViewer(); switchTab(0);}} catch(e) {alert('Invalid JSON format');}}
-        function initializeApp() {lucide.createIcons(); currentSVG = Templates.two_holes(); renderViewer(); switchTab(0); setUnits(0); const w = document.getElementById('svg-wrapper'); w.addEventListener('wheel', e => {e.preventDefault(); zoomLevel += e.deltaY * -0.001; zoomLevel = Math.max(0.5, Math.min(3, zoomLevel)); w.style.transform = `scale(${zoomLevel})`;}); w.addEventListener('mousedown', e => {if (e.button === 0) {isDragging = true; startPanX = e.clientX; startPanY = e.clientY;}}); window.addEventListener('mousemove', e => {if (!isDragging) return; const dx = e.clientX - startPanX, dy = e.clientY - startPanY; w.style.transform = `translate(${dx}px, ${dy}px) scale(${zoomLevel})`;}); window.addEventListener('mouseup', () => isDragging = false); const saved = localStorage.getItem('vibedraft_current'); if (saved) {try {const d = JSON.parse(saved); currentSVG = d.svg; if (d.meta) {document.getElementById('meta-title').value = d.meta.title; document.getElementById('meta-dwg').value = d.meta.dwg; document.getElementById('meta-rev').value = d.meta.rev; document.getElementById('meta-material').value = d.meta.material; document.getElementById('meta-scale').value = d.meta.scale; if (d.meta.paperSize) {document.getElementById('paper-size').value = d.meta.paperSize; changePaperSize();} if (d.meta.dimThickness) document.getElementById('dim-thickness').value = d.meta.dimThickness; if (d.meta.textHeight) document.getElementById('text-height').value = d.meta.textHeight;} renderViewer();} catch(e) {}}}
+        function saveDrawing() {if (!validateRequired()) return; const d = {svg: currentSVG, logo: currentLogo, meta: {title: document.getElementById('meta-title').value, dwg: document.getElementById('meta-dwg').value, rev: document.getElementById('meta-rev').value, material: document.getElementById('meta-material').value, scale: document.getElementById('meta-scale').value, paperSize: document.getElementById('paper-size').value, dimThickness: document.getElementById('dim-thickness').value, textHeight: document.getElementById('text-height').value}}; localStorage.setItem('vibedraft_current', JSON.stringify(d)); alert('✓ Drawing saved to browser');}
+        function exportSVG() {if (!validateRequired()) return; const b = new Blob([currentSVG], {type: 'image/svg+xml'}), u = URL.createObjectURL(b), a = document.createElement('a'); a.href = u; a.download = `${document.getElementById('meta-dwg').value || 'vibedraft'}.svg`; a.click();}
+        async function exportPDF() {if (!validateBeforeExport()) return; const j = window.jspdf, d = new j.jsPDF('p', 'mm', 'a4'); const c = document.getElementById('svg-wrapper'); const cv = await html2canvas(c, {scale: 3, backgroundColor: '#ffffff'}); const imgWidth = 210; const imgHeight = (cv.height * imgWidth) / cv.width; d.addImage(cv.toDataURL('image/png'), 'PNG', 0, 0, imgWidth, imgHeight); d.save(`${document.getElementById('meta-dwg').value || 'vibedraft'}.pdf`);}
+        function copyCode() {if (!currentSVG) {alert('⚠️ No drawing to copy'); return;} navigator.clipboard.writeText(currentSVG); alert('✓ SVG copied to clipboard');}
+        function copyGrokPrompt() {if (!validateRequired()) return; const set = getASMESettings(); const dims = document.getElementById('dim-thickness').value; const p = `vibedraft v0.1 Drawing\nPaper: ${document.getElementById('paper-size').value}\nDim Lines: ${dims}px thickness\nText: ${set.textHeight}px height\nUnits: ${currentUnits}\n\nASME Y14.5-2018 Compliance Requested\n\n\`\`\`svg\n${currentSVG}\n\`\`\`\n\nImprove with proper dimensioning, GD&T controls, and better layout. Return ONLY the SVG code.`; navigator.clipboard.writeText(p); alert('✓ Grok prompt copied with ASME settings');}
+        function loadFromJSON() {const j = prompt('Paste JSON data:'); if (!j) return; try {const d = JSON.parse(j); if (d.svg) {currentSVG = d.svg; if (d.logo) {currentLogo = d.logo; const preview = document.getElementById('logo-preview'); if (currentLogo) preview.innerHTML = `<img src="${currentLogo}" style="max-height: 100%; max-width: 100%; object-fit: contain;">`;}; if (d.meta) {document.getElementById('meta-title').value = d.meta.title || ''; document.getElementById('meta-dwg').value = d.meta.dwg || ''; document.getElementById('meta-rev').value = d.meta.rev || ''; document.getElementById('meta-material').value = d.meta.material || ''; document.getElementById('meta-scale').value = d.meta.scale || '1:1'; if (d.meta.paperSize) {document.getElementById('paper-size').value = d.meta.paperSize; changePaperSize();} if (d.meta.dimThickness) document.getElementById('dim-thickness').value = d.meta.dimThickness; if (d.meta.textHeight) document.getElementById('text-height').value = d.meta.textHeight;} renderViewer(); switchTab(0);}} catch(e) {alert('❌ Invalid JSON format');}}
+        function initializeApp() {lucide.createIcons(); currentSVG = Templates.two_holes(); renderViewer(); switchTab(0); setUnits(0); const w = document.getElementById('svg-wrapper'); w.addEventListener('wheel', e => {e.preventDefault(); zoomLevel += e.deltaY * -0.001; zoomLevel = Math.max(0.5, Math.min(3, zoomLevel)); w.style.transform = `scale(${zoomLevel})`;}); w.addEventListener('mousedown', e => {if (e.button === 0) {isDragging = true; startPanX = e.clientX; startPanY = e.clientY;}}); window.addEventListener('mousemove', e => {if (!isDragging) return; const dx = e.clientX - startPanX, dy = e.clientY - startPanY; w.style.transform = `translate(${dx}px, ${dy}px) scale(${zoomLevel})`;}); window.addEventListener('mouseup', () => isDragging = false); const saved = localStorage.getItem('vibedraft_current'); if (saved) {try {const d = JSON.parse(saved); currentSVG = d.svg; if (d.logo) {currentLogo = d.logo; const preview = document.getElementById('logo-preview'); if (currentLogo) preview.innerHTML = `<img src="${currentLogo}" style="max-height: 100%; max-width: 100%; object-fit: contain;">`;}; if (d.meta) {document.getElementById('meta-title').value = d.meta.title; document.getElementById('meta-dwg').value = d.meta.dwg; document.getElementById('meta-rev').value = d.meta.rev; document.getElementById('meta-material').value = d.meta.material; document.getElementById('meta-scale').value = d.meta.scale; if (d.meta.paperSize) {document.getElementById('paper-size').value = d.meta.paperSize; changePaperSize();} if (d.meta.dimThickness) document.getElementById('dim-thickness').value = d.meta.dimThickness; if (d.meta.textHeight) document.getElementById('text-height').value = d.meta.textHeight;} renderViewer();} catch(e) {}}}
         window.onload = initializeApp;
     </script>
 </body>
