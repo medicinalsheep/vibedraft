@@ -12,14 +12,20 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600&display=swap');
 
-        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
 
         .tail-container {
             font-family: 'Inter', system-ui, sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%);
         }
 
-        .logo-font { font-family: 'Space Grotesk', sans-serif; letter-spacing: -1px; }
+        .logo-font {
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -1px;
+        }
 
         .viewer-svg {
             background: #fafbfc;
@@ -38,14 +44,24 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
-        .tab-active { border-bottom: 2px solid #60a5fa; color: #60a5fa; font-weight: 600; }
+        .tab-active {
+            border-bottom: 2px solid #60a5fa;
+            color: #60a5fa;
+            font-weight: 600;
+        }
 
-        .constraint-item {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 0.75rem;
+        .error-badge {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            border-radius: 6px;
+        }
+
+        .success-badge {
+            background: #dcfce7;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            border-radius: 6px;
         }
 
         .template-grid {
@@ -71,12 +87,15 @@
             box-shadow: 0 10px 20px rgba(96,165,250,0.18);
         }
 
-        input, textarea, select { transition: all 0.2s ease; }
-        input:focus, textarea:focus, select:focus { box-shadow: 0 0 0 3px rgba(96,165,250,0.12); }
+        input, textarea, select {
+            transition: all 0.2s ease;
+        }
+        input:focus, textarea:focus, select:focus {
+            box-shadow: 0 0 0 3px rgba(96,165,250,0.12);
+        }
     </style>
 </head>
 <body class="tail-container text-slate-100 overflow-hidden h-screen flex flex-col">
-
     <nav class="bg-slate-900/50 backdrop-blur border-b border-slate-700/50 px-8 py-4 flex items-center justify-between">
         <div class="flex items-center gap-x-12">
             <div class="flex items-center gap-x-4">
@@ -95,18 +114,22 @@
             </div>
         </div>
         <div class="flex items-center gap-x-3">
-            <button onclick="newDrawing()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors text-slate-300 hover:text-white">
-                <i data-lucide="file-plus" class="w-4 h-4"></i><span class="text-xs font-medium">New</span>
+            <button onclick="newDrawing()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors duration-200 text-slate-300 hover:text-white">
+                <i data-lucide="file-plus" class="w-4 h-4"></i>
+                <span class="text-xs font-medium">New</span>
             </button>
-            <button onclick="saveDrawing()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors text-slate-300 hover:text-white">
-                <i data-lucide="save" class="w-4 h-4"></i><span class="text-xs font-medium">Save</span>
+            <button onclick="saveDrawing()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors duration-200 text-slate-300 hover:text-white">
+                <i data-lucide="save" class="w-4 h-4"></i>
+                <span class="text-xs font-medium">Save</span>
             </button>
             <div class="w-px h-6 bg-slate-700/50"></div>
-            <button onclick="exportSVG()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-blue-600/10 hover:bg-blue-600/20 transition-colors text-blue-400 hover:text-blue-300">
-                <i data-lucide="file-image" class="w-4 h-4"></i><span class="text-xs font-medium">SVG</span>
+            <button onclick="exportSVG()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-blue-600/10 hover:bg-blue-600/20 transition-colors duration-200 text-blue-400 hover:text-blue-300">
+                <i data-lucide="file-image" class="w-4 h-4"></i>
+                <span class="text-xs font-medium">SVG</span>
             </button>
-            <button onclick="exportPDF()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-blue-600/10 hover:bg-blue-600/20 transition-colors text-blue-400 hover:text-blue-300">
-                <i data-lucide="file-text" class="w-4 h-4"></i><span class="text-xs font-medium">PDF</span>
+            <button onclick="exportPDF()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-blue-600/10 hover:bg-blue-600/20 transition-colors duration-200 text-blue-400 hover:text-blue-300">
+                <i data-lucide="file-text" class="w-4 h-4"></i>
+                <span class="text-xs font-medium">PDF</span>
             </button>
         </div>
     </nav>
@@ -127,16 +150,26 @@
                         </label>
                         <div id="logo-preview" class="mt-2 h-12 bg-slate-800/50 border border-slate-700 rounded-lg flex items-center justify-center text-xs text-slate-500"></div>
                     </div>
-                    <div><label class="text-xs text-slate-400 font-medium block mb-2">Drawing Title <span class="text-red-400">*</span></label>
-                        <input type="text" id="meta-title" value="" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-400 font-medium block mb-2">Drawing Number <span class="text-red-400">*</span></label>
-                        <input type="text" id="meta-dwg" value="" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-400 font-medium block mb-2">Revision <span class="text-red-400">*</span></label>
-                        <input type="text" id="meta-rev" value="A" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-400 font-medium block mb-2">Material</label>
-                        <input type="text" id="meta-material" value="" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"></div>
-                    <div><label class="text-xs text-slate-400 font-medium block mb-2">Drawn By</label>
-                        <input type="text" id="meta-drawn-by" value="" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"></div>
+                    <div>
+                        <label class="text-xs text-slate-400 font-medium block mb-2">Drawing Title <span class="text-red-400">*</span></label>
+                        <input type="text" id="meta-title" value="" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 font-medium block mb-2">Drawing Number <span class="text-red-400">*</span></label>
+                        <input type="text" id="meta-dwg" value="" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 font-medium block mb-2">Revision <span class="text-red-400">*</span></label>
+                        <input type="text" id="meta-rev" value="A" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 font-medium block mb-2">Material</label>
+                        <input type="text" id="meta-material" value="" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 font-medium block mb-2">Drawn By</label>
+                        <input type="text" id="meta-drawn-by" value="" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
+                    </div>
                     <div>
                         <label class="text-xs text-slate-400 font-medium block mb-2">Orientation</label>
                         <select id="meta-orientation" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500">
@@ -160,10 +193,14 @@
                         </select>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <div><label class="text-xs text-slate-400 font-medium block mb-2">Width (px)</label>
-                            <input type="number" id="paper-width" value="816" class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500"></div>
-                        <div><label class="text-xs text-slate-400 font-medium block mb-2">Height (px)</label>
-                            <input type="number" id="paper-height" value="1056" class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500"></div>
+                        <div>
+                            <label class="text-xs text-slate-400 font-medium block mb-2">Width (px)</label>
+                            <input type="number" id="paper-width" value="816" class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 font-medium block mb-2">Height (px)</label>
+                            <input type="number" id="paper-height" value="1056" class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -189,9 +226,7 @@
             </div>
 
             <div class="border-t border-slate-700/30 pt-6 mt-auto">
-                <button onclick="validateDrawing()" class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-lg text-sm font-semibold text-white transition-all shadow-lg hover:shadow-xl">
-                    VALIDATE & REFRESH
-                </button>
+                <button onclick="validateDrawing()" class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-lg text-sm font-semibold text-white transition-all duration-200 shadow-lg hover:shadow-xl">VALIDATE &amp; REFRESH</button>
             </div>
         </div>
 
@@ -250,7 +285,7 @@
                         <h3 class="text-base font-semibold text-emerald-400 uppercase tracking-wider mb-4">📌 Workflow: How to Use with AI</h3>
                         <div class="space-y-3">
                             <div class="bg-slate-800/30 border border-slate-700 rounded-lg p-4">
-                                <div class="font-medium text-slate-100 mb-2">🔄 Option 1: Prompt Grok & Paste Code</div>
+                                <div class="font-medium text-slate-100 mb-2">🔄 Option 1: Prompt Grok &amp; Paste Code</div>
                                 <ol class="text-xs text-slate-400 space-y-1 ml-4 list-decimal">
                                     <li>Describe drawing above</li>
                                     <li>Click "Copy Prompt for Grok"</li>
@@ -274,7 +309,7 @@
                         <h3 class="text-base font-semibold text-blue-400 uppercase tracking-wider mb-4">🎯 Pro Tips</h3>
                         <ul class="text-xs text-slate-400 space-y-2">
                             <li><span class="text-blue-400">1.</span> Be specific with exact dimensions and features</li>
-                            <li><span class="text-blue-400">2.</span> Reference the TEMPLATES tab for layout & borders</li>
+                            <li><span class="text-blue-400">2.</span> Reference the TEMPLATES tab for bordered frames</li>
                             <li><span class="text-blue-400">3.</span> Ask for leaders, notes, and clean dimensioning</li>
                             <li><span class="text-blue-400">4.</span> Use Option 2 (direct link) for fastest results</li>
                             <li><span class="text-blue-400">5.</span> Iterate: "Refine the previous drawing..."</li>
@@ -288,7 +323,7 @@
                 <div class="max-w-5xl mx-auto w-full space-y-10">
                     <div>
                         <h2 class="text-2xl font-bold text-white mb-2">Paper Size Templates</h2>
-                        <p class="text-slate-400 mb-8">Click any template below to load a correctly proportioned drawing frame with title block area and example layout.</p>
+                        <p class="text-slate-400 mb-8">Click any template below to load a correctly proportioned drawing frame with professional border and example layout.</p>
 
                         <div class="template-grid">
                             <button onclick="insertTemplate('a_letter')" class="template-button">
@@ -296,30 +331,17 @@
                                 <div class="text-xs text-slate-400 mt-1">Letter 8.5 × 11"</div>
                                 <div class="text-[10px] text-slate-500 mt-1">816 × 1056 px</div>
                             </button>
-
                             <button onclick="insertTemplate('b_tabloid')" class="template-button">
                                 <div class="text-sm font-semibold text-slate-100">B Size</div>
                                 <div class="text-xs text-slate-400 mt-1">Tabloid 11 × 17"</div>
                                 <div class="text-[10px] text-slate-500 mt-1">1056 × 1632 px</div>
                             </button>
-
                             <button onclick="insertTemplate('d_arch')" class="template-button">
                                 <div class="text-sm font-semibold text-slate-100">D Size</div>
                                 <div class="text-xs text-slate-400 mt-1">ARCH D 24 × 36"</div>
                                 <div class="text-[10px] text-slate-500 mt-1">2304 × 3456 px</div>
                             </button>
                         </div>
-                    </div>
-
-                    <div class="bg-slate-800/40 border border-slate-700 rounded-xl p-6 text-sm text-slate-300">
-                        <h3 class="text-emerald-400 font-semibold mb-3">Quick Reminder – How to Use</h3>
-                        <ol class="list-decimal ml-5 space-y-2">
-                            <li>Click one of the size templates above</li>
-                            <li>Fill in title, number, revision, etc. in the sidebar</li>
-                            <li>Paste or generate your actual drawing geometry inside the frame</li>
-                            <li>Use AI tab or Grok to refine / add real parts & dimensions</li>
-                            <li>Export SVG or PDF when ready</li>
-                        </ol>
                     </div>
                 </div>
             </div>
@@ -336,38 +358,43 @@
         let currentSVG = '', currentUnits = 'inches', zoomLevel = 1, isDragging = false, startPanX = 0, startPanY = 0, currentLogo = '';
 
         const PaperSizes = {
-            letter:  { width: 816,  height: 1056, name: "A Size – Letter (8.5 × 11\")" },
-            tabloid: { width: 1056, height: 1632, name: "B Size – Tabloid (11 × 17\")" },
-            arch_d:  { width: 2304, height: 3456, name: "D Size – ARCH D (24 × 36\")" },
-            custom:  { width: 816,  height: 1056, name: "Custom" }
+            letter: { width: 816, height: 1056 },
+            tabloid: { width: 1056, height: 1632 },
+            arch_d: { width: 2304, height: 3456 },
+            custom: { width: 816, height: 1056 }
         };
 
         function uploadLogo() {
             const input = document.getElementById('logo-upload');
-            if (!input.files?.[0]) return;
+            if (!input.files[0]) return;
             const reader = new FileReader();
-            reader.onload = e => {
+            reader.onload = function (e) {
                 currentLogo = e.target.result;
-                document.getElementById('logo-preview').innerHTML = `<img src="${currentLogo}" style="max-height:100%;max-width:100%;object-fit:contain;">`;
+                const preview = document.getElementById('logo-preview');
+                preview.innerHTML = `<img src="${currentLogo}" style="max-height: 100%; max-width: 100%; object-fit: contain;">`;
                 renderTitleBlock();
             };
             reader.readAsDataURL(input.files[0]);
         }
 
         function validateRequired() {
-            const t = document.getElementById('meta-title')?.value?.trim();
-            const n = document.getElementById('meta-dwg')?.value?.trim();
-            const r = document.getElementById('meta-rev')?.value?.trim();
-            if (!t || !n || !r) {
+            const title = document.getElementById('meta-title').value.trim();
+            const dwg = document.getElementById('meta-dwg').value.trim();
+            const rev = document.getElementById('meta-rev').value.trim();
+            if (!title || !dwg || !rev) {
                 alert('⚠️ Title, Drawing Number, and Revision are required.');
                 return false;
             }
             return true;
         }
 
+        function validateBeforeExport() {
+            return validateRequired() && currentSVG;
+        }
+
         function changePaperSize() {
-            const size = document.getElementById('paper-size')?.value;
-            if (size && PaperSizes[size]) {
+            const size = document.getElementById('paper-size').value;
+            if (PaperSizes[size]) {
                 document.getElementById('paper-width').value = PaperSizes[size].width;
                 document.getElementById('paper-height').value = PaperSizes[size].height;
             }
@@ -375,10 +402,10 @@
         }
 
         function updateSVGSize() {
-            const w = parseFloat(document.getElementById('paper-width')?.value) || 816;
-            const h = parseFloat(document.getElementById('paper-height')?.value) || 1056;
+            const w = parseFloat(document.getElementById('paper-width').value) || 816;
+            const h = parseFloat(document.getElementById('paper-height').value) || 1056;
             const container = document.getElementById('svg-container');
-            const svg = container?.querySelector('svg');
+            const svg = container.querySelector('svg');
             if (svg) {
                 svg.setAttribute('width', w);
                 svg.setAttribute('height', h);
@@ -387,35 +414,79 @@
             }
         }
 
+        const SVGValidator = {
+            errors: [],
+            validate: function (s) {
+                this.errors = [];
+                try {
+                    const p = new DOMParser();
+                    const d = p.parseFromString(s, 'text/xml');
+                    if (d.getElementsByTagName('parsererror').length > 0) {
+                        this.errors.push('Invalid XML');
+                        return false;
+                    }
+                    return !!d.querySelector('svg');
+                } catch (e) {
+                    this.errors.push(e.message);
+                    return false;
+                }
+            }
+        };
+
+        // IMPROVED TEMPLATES – professional line weights, correct proportions, clear drawing area
         const Templates = {
             a_letter: () => `<svg width="816" height="1056" viewBox="0 0 816 1056" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-  <rect x="36" y="36" width="744" height="984" rx="16" fill="#f9fafb" stroke="#111827" stroke-width="28"/>
-  <rect x="516" y="846" width="240" height="150" fill="#e5e7eb" stroke="#6b7280" stroke-width="6"/>
-  <text x="636" y="930" font-family="sans-serif" font-size="32" fill="#1f2937" text-anchor="middle">TITLE BLOCK</text>
-  <rect x="120" y="120" width="576" height="696" fill="none" stroke="#9ca3af" stroke-width="8" stroke-dasharray="12 6"/>
-  <text x="408" y="540" font-family="sans-serif" font-size="48" fill="#6b7280" text-anchor="middle" opacity="0.6">DRAW HERE</text>
-  <line x1="180" y1="900" x2="636" y2="900" stroke="#4b5563" stroke-width="10" stroke-dasharray="10 5"/>
-  <text x="408" y="940" font-family="sans-serif" font-size="36" fill="#1f2937" text-anchor="middle" font-weight="600">EXAMPLE 12.00"</text>
+  <!-- Professional outer border -->
+  <rect x="32" y="32" width="752" height="992" rx="18" fill="#f9fafb" stroke="#111827" stroke-width="26"/>
+  <!-- Sample part (thick object lines) -->
+  <rect x="148" y="148" width="520" height="340" rx="12" fill="#e2e8f0" stroke="#1e2937" stroke-width="18"/>
+  <!-- Holes -->
+  <circle cx="280" cy="280" r="38" fill="none" stroke="#1e2937" stroke-width="14"/>
+  <circle cx="536" cy="280" r="38" fill="none" stroke="#1e2937" stroke-width="14"/>
+  <!-- Dimension lines (thin dashed) -->
+  <line x1="120" y1="520" x2="120" y2="148" stroke="#64748b" stroke-width="7" stroke-dasharray="10 6"/>
+  <text x="95" y="340" font-family="sans-serif" font-size="29" fill="#1e2937" text-anchor="middle" font-weight="600" transform="rotate(-90 95 340)">8.00"</text>
+  <line x1="148" y1="530" x2="668" y2="530" stroke="#64748b" stroke-width="7" stroke-dasharray="10 6"/>
+  <text x="408" y="565" font-family="sans-serif" font-size="31" fill="#1e2937" text-anchor="middle" font-weight="600">13.00"</text>
+  <!-- Title block placeholder -->
+  <rect x="520" y="860" width="244" height="148" fill="#e5e7eb" stroke="#6b7280" stroke-width="7"/>
+  <text x="642" y="940" font-family="sans-serif" font-size="26" fill="#374151" text-anchor="middle">TITLE BLOCK</text>
 </svg>`,
 
             b_tabloid: () => `<svg width="1056" height="1632" viewBox="0 0 1056 1632" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-  <rect x="48" y="48" width="960" height="1536" rx="20" fill="#f9fafb" stroke="#111827" stroke-width="36"/>
-  <rect x="672" y="1308" width="312" height="228" fill="#e5e7eb" stroke="#6b7280" stroke-width="8"/>
-  <text x="828" y="1440" font-family="sans-serif" font-size="48" fill="#1f2937" text-anchor="middle">TITLE BLOCK</text>
-  <rect x="144" y="144" width="768" height="1152" fill="none" stroke="#9ca3af" stroke-width="10" stroke-dasharray="16 8"/>
-  <text x="528" y="768" font-family="sans-serif" font-size="72" fill="#6b7280" text-anchor="middle" opacity="0.6">DRAW HERE</text>
-  <line x1="240" y1="1380" x2="816" y2="1380" stroke="#4b5563" stroke-width="12" stroke-dasharray="12 6"/>
-  <text x="528" y="1430" font-family="sans-serif" font-size="48" fill="#1f2937" text-anchor="middle" font-weight="600">EXAMPLE 18.00"</text>
+  <!-- Professional outer border -->
+  <rect x="44" y="44" width="968" height="1544" rx="24" fill="#f9fafb" stroke="#111827" stroke-width="34"/>
+  <!-- Sample part -->
+  <rect x="180" y="210" width="696" height="460" rx="18" fill="#e2e8f0" stroke="#1e2937" stroke-width="24"/>
+  <!-- Holes -->
+  <circle cx="380" cy="410" r="52" fill="none" stroke="#1e2937" stroke-width="18"/>
+  <circle cx="676" cy="410" r="52" fill="none" stroke="#1e2937" stroke-width="18"/>
+  <!-- Dimensions -->
+  <line x1="140" y1="720" x2="140" y2="210" stroke="#64748b" stroke-width="9" stroke-dasharray="12 7"/>
+  <text x="110" y="470" font-family="sans-serif" font-size="38" fill="#1e2937" text-anchor="middle" font-weight="600" transform="rotate(-90 110 470)">11.50"</text>
+  <line x1="180" y1="730" x2="876" y2="730" stroke="#64748b" stroke-width="9" stroke-dasharray="12 7"/>
+  <text x="528" y="775" font-family="sans-serif" font-size="41" fill="#1e2937" text-anchor="middle" font-weight="600">17.40"</text>
+  <!-- Title block placeholder -->
+  <rect x="680" y="1320" width="320" height="190" fill="#e5e7eb" stroke="#6b7280" stroke-width="9"/>
+  <text x="840" y="1430" font-family="sans-serif" font-size="36" fill="#374151" text-anchor="middle">TITLE BLOCK</text>
 </svg>`,
 
             d_arch: () => `<svg width="2304" height="3456" viewBox="0 0 2304 3456" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-  <rect x="96" y="96" width="2112" height="3264" rx="40" fill="#f9fafb" stroke="#111827" stroke-width="72"/>
-  <rect x="1440" y="2784" width="672" height="480" fill="#e5e7eb" stroke="#6b7280" stroke-width="16"/>
-  <text x="1776" y="3072" font-family="sans-serif" font-size="96" fill="#1f2937" text-anchor="middle">TITLE BLOCK</text>
-  <rect x="288" y="288" width="1728" height="2496" fill="none" stroke="#9ca3af" stroke-width="20" stroke-dasharray="24 12"/>
-  <text x="1152" y="1536" font-family="sans-serif" font-size="144" fill="#6b7280" text-anchor="middle" opacity="0.6">DRAW HERE</text>
-  <line x1="480" y1="2928" x2="1824" y2="2928" stroke="#4b5563" stroke-width="24" stroke-dasharray="20 10"/>
-  <text x="1152" y="3024" font-family="sans-serif" font-size="96" fill="#1f2937" text-anchor="middle" font-weight="600">EXAMPLE 36.00"</text>
+  <!-- Professional outer border -->
+  <rect x="88" y="88" width="2128" height="3280" rx="48" fill="#f9fafb" stroke="#111827" stroke-width="68"/>
+  <!-- Sample part -->
+  <rect x="380" y="420" width="1544" height="1020" rx="36" fill="#e2e8f0" stroke="#1e2937" stroke-width="52"/>
+  <!-- Holes -->
+  <circle cx="780" cy="860" r="110" fill="none" stroke="#1e2937" stroke-width="38"/>
+  <circle cx="1524" cy="860" r="110" fill="none" stroke="#1e2937" stroke-width="38"/>
+  <!-- Dimensions -->
+  <line x1="280" y1="1550" x2="280" y2="420" stroke="#64748b" stroke-width="18" stroke-dasharray="24 14"/>
+  <text x="220" y="990" font-family="sans-serif" font-size="82" fill="#1e2937" text-anchor="middle" font-weight="600" transform="rotate(-90 220 990)">25.50"</text>
+  <line x1="380" y1="1580" x2="1924" y2="1580" stroke="#64748b" stroke-width="18" stroke-dasharray="24 14"/>
+  <text x="1152" y="1660" font-family="sans-serif" font-size="88" fill="#1e2937" text-anchor="middle" font-weight="600">38.60"</text>
+  <!-- Title block placeholder -->
+  <rect x="1480" y="2800" width="680" height="420" fill="#e5e7eb" stroke="#6b7280" stroke-width="18"/>
+  <text x="1920" y="3050" font-family="sans-serif" font-size="78" fill="#374151" text-anchor="middle">TITLE BLOCK</text>
 </svg>`
         };
 
@@ -432,25 +503,22 @@
             if (c) c.innerHTML = currentSVG || '';
             updateSVGSize();
             renderTitleBlock();
-            const textarea = document.getElementById('code-text');
-            if (textarea) textarea.value = currentSVG;
+            const ta = document.getElementById('code-text');
+            if (ta) ta.value = currentSVG;
         }
 
         function renderTitleBlock() {
             const t = document.getElementById('title-block');
             if (!t) return;
-
-            const title  = document.getElementById('meta-title')?.value || 'Untitled Drawing';
-            const dwg    = document.getElementById('meta-dwg')?.value || 'DWG-001';
-            const rev    = document.getElementById('meta-rev')?.value || 'A';
-            const mat    = document.getElementById('meta-material')?.value || '';
-            const scale  = document.getElementById('meta-scale')?.value || '1:1';
-            const drawn  = document.getElementById('meta-drawn-by')?.value || '—';
+            const title = document.getElementById('meta-title').value || 'Untitled Drawing';
+            const dwg = document.getElementById('meta-dwg').value || 'DWG-001';
+            const rev = document.getElementById('meta-rev').value || 'A';
+            const mat = document.getElementById('meta-material').value || '';
+            const scale = document.getElementById('meta-scale').value || '1:1';
+            const drawnBy = document.getElementById('meta-drawn-by').value || '—';
             let logoHtml = currentLogo ? `<img src="${currentLogo}" style="height:64px;object-fit:contain;"/>` : '';
-
-            const w = parseFloat(document.getElementById('paper-width')?.value) || 816;
+            const w = parseFloat(document.getElementById('paper-width').value) || 816;
             t.style.width = `${w}px`;
-
             t.innerHTML = `
                 <div class="col-span-12 flex justify-between items-start border-b border-slate-300 pb-5">
                     <div class="flex items-start gap-5">
@@ -466,45 +534,149 @@
                     </div>
                 </div>
                 <div class="col-span-12 text-xs pt-5 text-slate-600 grid grid-cols-3">
-                    <div>DRAWN BY: ${drawn}</div>
+                    <div>DRAWN BY: ${drawnBy}</div>
                     <div class="text-center">DATE: ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
                     <div class="text-right">vibedraft</div>
                 </div>`;
         }
 
         function switchTab(n) {
-            document.querySelectorAll('[id^="tab-"]').forEach(b => {
-                if (b) b.classList.remove('tab-active');
-            });
+            document.querySelectorAll('[id^="tab-"]').forEach(b => { if (b) b.classList.remove('tab-active'); });
+            const active = document.getElementById(`tab-${n}`);
+            if (active) active.classList.add('tab-active');
 
-            const activeTab = document.getElementById(`tab-${n}`);
-            if (activeTab) activeTab.classList.add('tab-active');
-
-            const panels = ['viewer-panel', 'code-panel', 'three-panel', 'ai-panel', 'rules-panel'];
-            panels.forEach(id => {
+            const panelIds = ['viewer-panel','code-panel','three-panel','ai-panel','rules-panel'];
+            panelIds.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
             });
-
-            const panelToShow = document.getElementById(panels[n]);
-            if (panelToShow) panelToShow.classList.remove('hidden');
+            const toShow = document.getElementById(panelIds[n]);
+            if (toShow) toShow.classList.remove('hidden');
         }
 
-        // ────────────────────────────────────────────────
-        //  Remaining functions (minimal version – add back what you need)
-        // ────────────────────────────────────────────────
-
-        function validateDrawing() {
-            renderTitleBlock();
-            alert('Metadata and viewport refreshed');
-        }
-
-        function newDrawing() {
-            if (confirm('Start fresh?')) {
-                currentSVG = Templates.a_letter();
+        function loadCodeFromTextarea() {
+            const code = document.getElementById('code-text').value.trim();
+            if (!code) return alert('Paste SVG code first');
+            if (SVGValidator.validate(code)) {
+                extractAndApplyMetadata(code);
+                currentSVG = code;
                 renderViewer();
                 switchTab(0);
+                alert('✓ Drawing loaded! Metadata auto-populated from comments.');
+            } else {
+                alert('❌ Invalid SVG:\n' + SVGValidator.errors.join('\n'));
             }
+        }
+
+        function extractAndApplyMetadata(svgCode) {
+            const patterns = {
+                title: /<!-- VIBEDRAFT_TITLE: (.*?) -->/,
+                dwg: /<!-- VIBEDRAFT_NUMBER: (.*?) -->/,
+                rev: /<!-- VIBEDRAFT_REVISION: (.*?) -->/,
+                material: /<!-- VIBEDRAFT_MATERIAL: (.*?) -->/,
+                scale: /<!-- VIBEDRAFT_SCALE: (.*?) -->/,
+                drawnBy: /<!-- VIBEDRAFT_DRAWN_BY: (.*?) -->/,
+                orientation: /<!-- VIBEDRAFT_ORIENTATION: (.*?) -->/
+            };
+            for (let key in patterns) {
+                const m = svgCode.match(patterns[key]);
+                if (m) {
+                    const el = document.getElementById(key === 'dwg' ? 'meta-dwg' : `meta-${key}`);
+                    if (el) el.value = m[1];
+                }
+            }
+        }
+
+        function getMetadataComments() {
+            return `<!-- VIBEDRAFT_TITLE: ${document.getElementById('meta-title').value} -->
+<!-- VIBEDRAFT_NUMBER: ${document.getElementById('meta-dwg').value} -->
+<!-- VIBEDRAFT_REVISION: ${document.getElementById('meta-rev').value} -->
+<!-- VIBEDRAFT_MATERIAL: ${document.getElementById('meta-material').value} -->
+<!-- VIBEDRAFT_SCALE: ${document.getElementById('meta-scale').value} -->
+<!-- VIBEDRAFT_DRAWN_BY: ${document.getElementById('meta-drawn-by').value} -->
+<!-- VIBEDRAFT_ORIENTATION: ${document.getElementById('meta-orientation').value} -->\n`;
+        }
+
+        function copyCodeWithMetadata() {
+            if (!currentSVG) return alert('No drawing to copy');
+            navigator.clipboard.writeText(getMetadataComments() + currentSVG);
+            alert('✓ Copied with metadata comments (auto-loads on paste)');
+        }
+
+        function copyCode() {
+            if (!currentSVG) return alert('No drawing');
+            navigator.clipboard.writeText(currentSVG);
+            alert('✓ SVG copied');
+        }
+
+        function copyAIPromptWithMetadata() {
+            const desc = document.getElementById('ai-prompt').value.trim();
+            if (!desc) return alert('Describe your drawing first');
+            const meta = getMetadataComments();
+            const prompt = `Create a clean professional technical drawing in SVG format for vibedraft.
+
+CRITICAL: Start with these exact metadata comments (before <svg>):
+${meta}
+
+Use the exact bordered frame style from the TEMPLATES tab (thick outer border, safe drawing area).
+
+DESCRIPTION:
+${desc}
+
+Return ONLY the full SVG code with metadata comments at the very top.`;
+            navigator.clipboard.writeText(prompt);
+            alert('✓ Prompt copied! Paste into Grok → get SVG → paste in CODE tab → LOAD CODE');
+        }
+
+        function copyDirectLink() {
+            const link = window.location.href;
+            const desc = document.getElementById('ai-prompt').value.trim() || "Create a technical drawing";
+            const full = `Please use this vibedraft tool and create the drawing:
+
+${link}
+
+Request: ${desc}
+
+1. Open the link
+2. Go to TEMPLATES tab and choose size
+3. Fill sidebar metadata
+4. Build / refine the drawing
+5. Export final SVG or PDF
+
+Thank you!`;
+            navigator.clipboard.writeText(full);
+            alert('✓ Direct link + instructions copied!');
+        }
+
+        function copyGrokPrompt() {
+            if (!currentSVG) return alert('Create or load a drawing first');
+            const p = `Refine this technical drawing. Keep the thick bordered frame and metadata comments. Improve dimensions, add leaders if needed. Return ONLY the updated SVG code.\n\n\`\`\`svg\n${currentSVG}\n\`\`\``;
+            navigator.clipboard.writeText(p);
+            alert('✓ Refinement prompt copied');
+        }
+
+        function initThreeIfNeeded() {
+            if (window.threeInitialized) return;
+            window.threeInitialized = true;
+            const canvas = document.getElementById('three-canvas');
+            const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+            renderer.setSize(window.innerWidth * 0.68, window.innerHeight * 0.78);
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a1428);
+            const camera = new THREE.PerspectiveCamera(45, 1.6, 10, 3000);
+            camera.position.set(800, 600, 1100);
+            const light = new THREE.DirectionalLight(0xffffff, 1.6);
+            light.position.set(900, 1200, 1000);
+            scene.add(light);
+            scene.add(new THREE.AmbientLight(0xaaaaaa));
+            const box = new THREE.Mesh(new THREE.BoxGeometry(520, 160, 680), new THREE.MeshPhongMaterial({ color: 0x64748b }));
+            scene.add(box);
+            function animate() {
+                requestAnimationFrame(animate);
+                box.rotation.y += 0.001;
+                renderer.render(scene, camera);
+            }
+            animate();
         }
 
         function setUnits(n) {
@@ -512,13 +684,145 @@
             const mmBtn = document.getElementById('unit-mm');
             const label = document.getElementById('units-label');
             if (!inBtn || !mmBtn || !label) return;
-
             inBtn.classList.toggle('bg-blue-600', n === 0);
             inBtn.classList.toggle('text-white', n === 0);
             mmBtn.classList.toggle('bg-blue-600', n === 1);
             mmBtn.classList.toggle('text-white', n === 1);
             label.textContent = n === 0 ? 'INCHES' : 'MILLIMETERS';
             currentUnits = n === 0 ? 'inches' : 'mm';
+        }
+
+        function validateDrawing() {
+            renderTitleBlock();
+            alert('✅ Metadata & viewport refreshed');
+        }
+
+        function validateAndShowErrors() {
+            const s = document.getElementById('code-text').value;
+            const valid = SVGValidator.validate(s);
+            const panel = document.getElementById('validation-panel');
+            const output = document.getElementById('validation-output');
+            if (valid) {
+                output.innerHTML = '<div class="success-badge p-3 rounded">✓ Valid SVG code</div>';
+            } else {
+                let html = '<div class="space-y-1">';
+                SVGValidator.errors.forEach(e => html += `<div class="error-badge p-3 rounded text-xs">${e}</div>`);
+                html += '</div>';
+                output.innerHTML = html;
+            }
+            panel.classList.remove('hidden');
+        }
+
+        function newDrawing() {
+            if (confirm('Start a fresh drawing?')) {
+                currentSVG = Templates.a_letter();
+                renderViewer();
+                switchTab(0);
+            }
+        }
+
+        function saveDrawing() {
+            if (!validateRequired()) return;
+            const data = {
+                svg: currentSVG,
+                logo: currentLogo,
+                meta: {
+                    title: document.getElementById('meta-title').value,
+                    dwg: document.getElementById('meta-dwg').value,
+                    rev: document.getElementById('meta-rev').value,
+                    material: document.getElementById('meta-material').value,
+                    scale: document.getElementById('meta-scale').value,
+                    drawnBy: document.getElementById('meta-drawn-by').value,
+                    orientation: document.getElementById('meta-orientation').value,
+                    paperSize: document.getElementById('paper-size').value
+                }
+            };
+            localStorage.setItem('vibedraft_current', JSON.stringify(data));
+            alert('✓ Saved to browser');
+        }
+
+        function exportSVG() {
+            if (!validateBeforeExport()) return;
+            const blob = new Blob([currentSVG], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${document.getElementById('meta-dwg').value || 'drawing'}.svg`;
+            a.click();
+        }
+
+        async function exportPDF() {
+            if (!validateBeforeExport()) return;
+            const orientation = document.getElementById('meta-orientation').value === 'landscape' ? 'l' : 'p';
+            let sizeKey = document.getElementById('paper-size').value;
+            let pdf;
+            const { jsPDF } = window.jspdf;
+
+            if (sizeKey === 'arch_d') {
+                pdf = new jsPDF(orientation, 'mm', [609.6, 914.4]); // 24×36 inches
+            } else {
+                pdf = new jsPDF(orientation, 'mm', sizeKey === 'tabloid' ? 'tabloid' : 'letter');
+            }
+
+            let y = 15;
+            if (currentLogo) {
+                pdf.addImage(currentLogo, 'PNG', 15, y, 30, 15);
+                y += 18;
+            }
+            pdf.setFontSize(20);
+            pdf.text(document.getElementById('meta-title').value || 'Technical Drawing', 15, y);
+            y += 10;
+            pdf.setFontSize(11);
+            pdf.text(`${document.getElementById('meta-dwg').value || '—'} • REV ${document.getElementById('meta-rev').value || '—'}`, 15, y);
+            y += 15;
+
+            const wrapper = document.getElementById('svg-wrapper');
+            const canvas = await html2canvas(wrapper, { scale: 3, backgroundColor: '#ffffff' });
+            const imgData = canvas.toDataURL('image/png');
+            const pw = pdf.internal.pageSize.getWidth();
+            const ph = pdf.internal.pageSize.getHeight();
+            let iw = pw - 30;
+            let ih = iw * (canvas.height / canvas.width);
+            if (ih > ph - y - 30) {
+                ih = ph - y - 30;
+                iw = ih * (canvas.width / canvas.height);
+            }
+            pdf.addImage(imgData, 'PNG', (pw - iw) / 2, y, iw, ih);
+            pdf.save(`${document.getElementById('meta-dwg').value || 'drawing'}.pdf`);
+        }
+
+        function loadFromJSON() {
+            const json = prompt('Paste saved JSON:');
+            if (!json) return;
+            try {
+                const d = JSON.parse(json);
+                if (d.svg) currentSVG = d.svg;
+                if (d.logo) {
+                    currentLogo = d.logo;
+                    document.getElementById('logo-preview').innerHTML = `<img src="${currentLogo}" style="max-height:100%;max-width:100%;object-fit:contain;">`;
+                }
+                if (d.meta) {
+                    Object.keys(d.meta).forEach(k => {
+                        const el = document.getElementById(k === 'dwg' ? 'meta-dwg' : `meta-${k}`);
+                        if (el) el.value = d.meta[k] || '';
+                    });
+                    if (d.meta.paperSize) {
+                        document.getElementById('paper-size').value = d.meta.paperSize;
+                        changePaperSize();
+                    }
+                }
+                renderViewer();
+                switchTab(0);
+            } catch (e) {
+                alert('❌ Invalid JSON');
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('Clear everything and start fresh?')) {
+                localStorage.removeItem('vibedraft_current');
+                location.reload();
+            }
         }
 
         function initializeApp() {
@@ -532,16 +836,15 @@
                     if (d.logo) currentLogo = d.logo;
                     if (d.meta) {
                         ['title','dwg','rev','material','scale','drawnBy','orientation'].forEach(k => {
-                            const el = document.getElementById(`meta-${k}`);
+                            const el = document.getElementById(k === 'dwg' ? 'meta-dwg' : `meta-${k}`);
                             if (el && d.meta[k]) el.value = d.meta[k];
                         });
-                        const ps = document.getElementById('paper-size');
-                        if (ps && d.meta.paperSize) {
-                            ps.value = d.meta.paperSize;
+                        if (d.meta.paperSize) {
+                            document.getElementById('paper-size').value = d.meta.paperSize;
                             changePaperSize();
                         }
                     }
-                } catch (e) {}
+                } catch (_) {}
             } else {
                 currentSVG = Templates.a_letter();
             }
@@ -549,6 +852,30 @@
             renderViewer();
             switchTab(0);
             setUnits(0);
+
+            // Pan & zoom
+            const wrapper = document.getElementById('svg-wrapper');
+            wrapper.addEventListener('wheel', e => {
+                e.preventDefault();
+                zoomLevel = Math.max(0.4, Math.min(4, zoomLevel + e.deltaY * -0.0015));
+                wrapper.style.transform = `scale(${zoomLevel})`;
+            });
+
+            let panX = 0, panY = 0;
+            wrapper.addEventListener('mousedown', e => {
+                if (e.button === 0) {
+                    isDragging = true;
+                    startPanX = e.clientX - panX;
+                    startPanY = e.clientY - panY;
+                }
+            });
+            window.addEventListener('mousemove', e => {
+                if (!isDragging) return;
+                panX = e.clientX - startPanX;
+                panY = e.clientY - startPanY;
+                wrapper.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomLevel})`;
+            });
+            window.addEventListener('mouseup', () => isDragging = false);
         }
 
         window.onload = initializeApp;
