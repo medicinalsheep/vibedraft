@@ -253,7 +253,7 @@
         <div class="flex-1">vibedraft v0.5</div>
     </div>
 
-    <script>
+   <script>
     tailwind.config = { content: [] };
 
     let currentSVG = '', currentUnits = 'inches', zoomLevel = 1, isDragging = false, startPanX = 0, startPanY = 0, currentLogo = '';
@@ -278,7 +278,7 @@
         document.getElementById('paper-height').value = dims.h;
 
         updateSVGSize();
-        renderViewer(); // refresh title block width + redraw
+        renderViewer();
     }
 
     function uploadLogo() {
@@ -314,6 +314,8 @@
             svg.setAttribute('height', h);
             svg.style.width = `${w}px`;
             svg.style.height = `${h}px`;
+            svg.style.maxWidth = '100%';
+            svg.style.maxHeight = '78vh';
         }
     }
 
@@ -336,16 +338,17 @@
         }
     };
 
+    // Templates now use width/height attributes + matching viewBox → no scaling issues
     const Templates = {
-        a_letter: () => `<svg viewBox="0 0 1056 816" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        a_letter: () => `<svg width="1056" height="816" viewBox="0 0 1056 816" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
   <rect x="32" y="32" width="992" height="752" rx="12" stroke="#111827" stroke-width="4"/>
 </svg>`,
 
-        b_tabloid: () => `<svg viewBox="0 0 1632 1056" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        b_tabloid: () => `<svg width="1632" height="1056" viewBox="0 0 1632 1056" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
   <rect x="44" y="44" width="1544" height="968" rx="16" stroke="#111827" stroke-width="4"/>
 </svg>`,
 
-        d_arch: () => `<svg viewBox="0 0 3456 2304" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+        d_arch: () => `<svg width="3456" height="2304" viewBox="0 0 3456 2304" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
   <rect x="88" y="88" width="3280" height="2128" rx="32" stroke="#111827" stroke-width="4"/>
 </svg>`
     };
@@ -380,7 +383,7 @@
         let logoHtml = currentLogo ? `<img src="${currentLogo}" style="height:64px;object-fit:contain;"/>` : '';
 
         const w = parseFloat(document.getElementById('paper-width')?.value) || 1056;
-        t.style.width = `${Math.min(w, window.innerWidth * 0.9)}px`;
+        t.style.width = `${Math.min(w, window.innerWidth * 0.92)}px`;
 
         t.innerHTML = `
             <div class="col-span-12 flex justify-between items-start border-b border-slate-300 pb-5">
@@ -617,42 +620,83 @@ Thanks!`;
 
     async function exportPDF() {
         if (!validateRequired() || !currentSVG) return alert('Missing required fields or no drawing');
+
         const orientation = document.getElementById('meta-orientation')?.value === 'landscape' ? 'l' : 'p';
         let sizeKey = document.getElementById('paper-size')?.value || 'letter';
         const { jsPDF } = window.jspdf;
         let pdf;
 
+        // Handle ARCH D custom size (24×36 inches = 609.6 × 914.4 mm)
         if (sizeKey === 'arch_d') {
-            pdf = new jsPDF(orientation, 'mm', [609.6, 914.4]); // 24×36 in
+            pdf = new jsPDF(orientation, 'mm', [orientation === 'l' ? 914.4 : 609.6, orientation === 'l' ? 609.6 : 914.4]);
         } else {
             pdf = new jsPDF(orientation, 'mm', sizeKey === 'tabloid' ? 'tabloid' : 'letter');
         }
 
-        let y = 15;
-        if (currentLogo) {
-            pdf.addImage(currentLogo, 'PNG', 15, y, 28, 14);
-            y += 18;
-        }
-        pdf.setFontSize(20);
-        pdf.text(document.getElementById('meta-title')?.value || 'Technical Drawing', 15, y);
-        y += 12;
-        pdf.setFontSize(11);
-        pdf.text(`${document.getElementById('meta-dwg')?.value || '—'} • REV ${document.getElementById('meta-rev')?.value || '—'}`, 15, y);
-        y += 15;
+        const pageWidth  = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
 
-        const wrapper = document.getElementById('svg-wrapper');
-        const canvas = await html2canvas(wrapper, { scale: 3, backgroundColor: '#ffffff' });
-        const imgData = canvas.toDataURL('image/png');
-        const pw = pdf.internal.pageSize.getWidth();
-        const ph = pdf.internal.pageSize.getHeight();
-        let iw = pw - 30;
-        let ih = iw * (canvas.height / canvas.width);
-        if (ih > ph - y - 30) {
-            ih = ph - y - 30;
-            iw = ih * (canvas.width / canvas.height);
+        let y = 12;
+
+        // Logo (auto-scaled, max ~40mm wide)
+        if (currentLogo) {
+            const img = new Image();
+            img.src = currentLogo;
+            await new Promise(r => img.onload = r);
+
+            let logoW = 40; // mm target width
+            let logoH = logoW * (img.height / img.width);
+            if (logoH > 25) { // cap height
+                logoH = 25;
+                logoW = logoH * (img.width / img.height);
+            }
+            pdf.addImage(img, 'PNG', (pageWidth - logoW) / 2, y, logoW, logoH);
+            y += logoH + 8;
         }
-        pdf.addImage(imgData, 'PNG', (pw - iw)/2, y, iw, ih);
+
+        // Title & drawing number
+        pdf.setFontSize(20);
+        pdf.text(document.getElementById('meta-title')?.value || 'Technical Drawing', pageWidth / 2, y, { align: 'center' });
+        y += 10;
+        pdf.setFontSize(11);
+        pdf.text(`${document.getElementById('meta-dwg')?.value || '—'} • REV ${document.getElementById('meta-rev')?.value || '—'}`, pageWidth / 2, y, { align: 'center' });
+        y += 12;
+
+        // Horizontal line separator
+        pdf.setLineWidth(0.4);
+        pdf.line(15, y, pageWidth - 15, y);
+        y += 10;
+
+        // Render SVG drawing (centered, max usable space)
+        const wrapper = document.getElementById('svg-wrapper');
+        const canvas = await html2canvas(wrapper, {
+            scale: 3,
+            backgroundColor: '#ffffff',
+            logging: false,
+            useCORS: true
+        });
+        const imgData = canvas.toDataURL('image/png');
+
+        const drawAreaW = pageWidth - 30;
+        const drawAreaH = pageHeight - y - 30;
+        const imgRatio = canvas.width / canvas.height;
+        let drawW = drawAreaW;
+        let drawH = drawW / imgRatio;
+
+        if (drawH > drawAreaH) {
+            drawH = drawAreaH;
+            drawW = drawH * imgRatio;
+        }
+
+        pdf.addImage(imgData, 'PNG', (pageWidth - drawW) / 2, y, drawW, drawH);
+
         pdf.save(`${document.getElementById('meta-dwg')?.value || 'drawing'}.pdf`);
+
+        // One-time guidance for logo sizing
+        if (!localStorage.getItem('pdf-logo-hint-shown')) {
+            alert('PDF exported!\n\nTip: For best logo clarity in PDF, use images ~120–200 px wide (vector/SVG logos work best).');
+            localStorage.setItem('pdf-logo-hint-shown', 'true');
+        }
     }
 
     function loadFromJSON() {
@@ -712,7 +756,7 @@ Thanks!`;
             currentSVG = Templates.a_letter();
         }
 
-        updatePaperDimensions(); // Ensure correct landscape defaults on start
+        updatePaperDimensions(); // Force correct landscape defaults on load
         renderViewer();
         switchTab(0);
         setUnits(0);
@@ -747,3 +791,4 @@ Thanks!`;
 </script>
 </body>
 </html>
+
