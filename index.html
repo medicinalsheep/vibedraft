@@ -312,29 +312,29 @@
                         <div class="template-grid">
                             <button onclick="insertTemplate('a_letter_with')" class="template-button">
                                 <div class="text-sm font-semibold text-slate-100">A Size – with title block</div>
-                                <div class="text-xs text-slate-400 mt-1">1056 × 816 px</div>
+                                <div class="text-xs text-slate-400 mt-1">1056 × 676 px (reserved bottom)</div>
                             </button>
                             <button onclick="insertTemplate('a_letter_no')" class="template-button">
                                 <div class="text-sm font-semibold text-slate-100">A Size – no title block</div>
-                                <div class="text-xs text-slate-400 mt-1">1056 × 816 px</div>
+                                <div class="text-xs text-slate-400 mt-1">1056 × 816 px (full height)</div>
                             </button>
 
                             <button onclick="insertTemplate('b_tabloid_with')" class="template-button">
                                 <div class="text-sm font-semibold text-slate-100">B Size – with title block</div>
-                                <div class="text-xs text-slate-400 mt-1">1632 × 1056 px</div>
+                                <div class="text-xs text-slate-400 mt-1">1632 × 836 px (reserved bottom)</div>
                             </button>
                             <button onclick="insertTemplate('b_tabloid_no')" class="template-button">
                                 <div class="text-sm font-semibold text-slate-100">B Size – no title block</div>
-                                <div class="text-xs text-slate-400 mt-1">1632 × 1056 px</div>
+                                <div class="text-xs text-slate-400 mt-1">1632 × 1056 px (full height)</div>
                             </button>
 
                             <button onclick="insertTemplate('d_arch_with')" class="template-button">
                                 <div class="text-sm font-semibold text-slate-100">D Size – with title block</div>
-                                <div class="text-xs text-slate-400 mt-1">3456 × 2304 px</div>
+                                <div class="text-xs text-slate-400 mt-1">3456 × 1976 px (reserved bottom)</div>
                             </button>
                             <button onclick="insertTemplate('d_arch_no')" class="template-button">
                                 <div class="text-sm font-semibold text-slate-100">D Size – no title block</div>
-                                <div class="text-xs text-slate-400 mt-1">3456 × 2304 px</div>
+                                <div class="text-xs text-slate-400 mt-1">3456 × 2304 px (full height)</div>
                             </button>
                         </div>
                     </div>
@@ -360,7 +360,7 @@
             custom:  { landscape: {w:1056, h:816},  portrait: {w:816, h:1056} }
         };
 
-        const TitleBlockHeight = {
+        const TitleBlockReservedHeight = {
             letter:  140,
             tabloid: 220,
             arch_d:  480,
@@ -383,19 +383,18 @@
         function updatePaperDimensions() {
             const sizeKey = document.getElementById('paper-size')?.value || 'letter';
             const ori = getCurrentOrientation();
-            let dims = PaperSizes[sizeKey]?.[ori] || PaperSizes.letter.landscape;
+            let baseDims = PaperSizes[sizeKey]?.[ori] || PaperSizes.letter.landscape;
 
-            if (!includeTitleBlock) {
-                // Full height when title block is disabled
-                dims = { w: dims.w, h: dims.h };
-            } else {
-                // Reserve space at bottom for title block
-                const tbHeight = TitleBlockHeight[sizeKey] || 140;
-                dims = { w: dims.w, h: dims.h - tbHeight };
+            let w = baseDims.w;
+            let h = baseDims.h;
+
+            if (includeTitleBlock) {
+                const reserved = TitleBlockReservedHeight[sizeKey] || 140;
+                h -= reserved;
             }
 
-            document.getElementById('paper-width').value = dims.w;
-            document.getElementById('paper-height').value = dims.h;
+            document.getElementById('paper-width').value = w;
+            document.getElementById('paper-height').value = h;
 
             updateSVGSize();
             renderViewer();
@@ -768,6 +767,7 @@ Thanks!`;
             const { jsPDF } = window.jspdf;
             let pdf;
 
+            // Correct page size for ARCH D
             if (sizeKey === 'arch_d') {
                 pdf = new jsPDF(orientation, 'mm', [orientation === 'l' ? 914.4 : 609.6, orientation === 'l' ? 609.6 : 914.4]);
             } else {
@@ -779,14 +779,15 @@ Thanks!`;
 
             let y = 12;
 
-            // Metadata / title block area (only if enabled)
+            // Only draw title block / metadata if enabled
             if (includeTitleBlock) {
+                // Logo (centered, auto-scaled)
                 if (currentLogo) {
                     const img = new Image();
                     img.src = currentLogo;
                     await new Promise(r => img.onload = r);
 
-                    let logoW = 40;
+                    let logoW = 40; // target width in mm
                     let logoH = logoW * (img.height / img.width);
                     if (logoH > 25) {
                         logoH = 25;
@@ -796,19 +797,23 @@ Thanks!`;
                     y += logoH + 8;
                 }
 
+                // Title (centered, large)
                 pdf.setFontSize(20);
                 pdf.text(document.getElementById('meta-title')?.value || 'Technical Drawing', pageWidth / 2, y, { align: 'center' });
                 y += 10;
+
+                // Drawing number + revision
                 pdf.setFontSize(11);
                 pdf.text(`${document.getElementById('meta-dwg')?.value || '—'} • REV ${document.getElementById('meta-rev')?.value || '—'}`, pageWidth / 2, y, { align: 'center' });
                 y += 12;
 
+                // Separator line
                 pdf.setLineWidth(0.4);
                 pdf.line(15, y, pageWidth - 15, y);
-                y += 10;
+                y += 12;
             }
 
-            // Drawing area
+            // Draw the SVG content (centered in remaining space)
             const wrapper = document.getElementById('svg-wrapper');
             const canvas = await html2canvas(wrapper, {
                 scale: 3,
