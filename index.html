@@ -12,27 +12,22 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600&display=swap');
 
-        * {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
         .tail-container {
             font-family: 'Inter', system-ui, sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1a1f3a 100%);
         }
 
-        .logo-font {
-            font-family: 'Space Grotesk', sans-serif;
-            letter-spacing: -1px;
-        }
+        .logo-font { font-family: 'Space Grotesk', sans-serif; letter-spacing: -1px; }
 
         .viewer-svg {
-            background: #fafbfc;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            background: #ffffff;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.35);
             border-radius: 12px;
             border: 1px solid #e2e8f0;
             max-height: 78vh;
+            overflow: hidden;
         }
 
         .title-block {
@@ -44,25 +39,10 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
 
-        .tab-active {
-            border-bottom: 2px solid #60a5fa;
-            color: #60a5fa;
-            font-weight: 600;
-        }
+        .tab-active { border-bottom: 2px solid #60a5fa; color: #60a5fa; font-weight: 600; }
 
-        .error-badge {
-            background: #fee2e2;
-            border: 1px solid #fecaca;
-            color: #991b1b;
-            border-radius: 6px;
-        }
-
-        .success-badge {
-            background: #dcfce7;
-            border: 1px solid #bbf7d0;
-            color: #166534;
-            border-radius: 6px;
-        }
+        .error-badge { background: #fee2e2; border: 1px solid #fecaca; color: #991b1b; border-radius: 6px; }
+        .success-badge { background: #dcfce7; border: 1px solid #bbf7d0; color: #166534; border-radius: 6px; }
 
         .template-grid {
             display: grid;
@@ -87,22 +67,19 @@
             box-shadow: 0 10px 20px rgba(96,165,250,0.18);
         }
 
-        input, textarea, select {
-            transition: all 0.2s ease;
-        }
-        input:focus, textarea:focus, select:focus {
-            box-shadow: 0 0 0 3px rgba(96,165,250,0.12);
-        }
+        input, textarea, select { transition: all 0.2s ease; }
+        input:focus, textarea:focus, select:focus { box-shadow: 0 0 0 3px rgba(96,165,250,0.12); }
     </style>
 </head>
 <body class="tail-container text-slate-100 overflow-hidden h-screen flex flex-col">
+
     <nav class="bg-slate-900/50 backdrop-blur border-b border-slate-700/50 px-8 py-4 flex items-center justify-between">
         <div class="flex items-center gap-x-12">
             <div class="flex items-center gap-x-4">
                 <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-white font-bold logo-font text-lg shadow-lg">VD</div>
                 <div>
                     <h1 class="logo-font text-3xl font-bold tracking-tight text-white">vibedraft</h1>
-                    <span class="text-xs font-medium text-cyan-400">v0.4</span>
+                    <span class="text-xs font-medium text-cyan-400">v0.5</span>
                 </div>
             </div>
             <div class="flex gap-x-8 text-sm font-medium">
@@ -114,28 +91,24 @@
             </div>
         </div>
         <div class="flex items-center gap-x-3">
-            <button onclick="newDrawing()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors duration-200 text-slate-300 hover:text-white">
-                <i data-lucide="file-plus" class="w-4 h-4"></i>
-                <span class="text-xs font-medium">New</span>
+            <button onclick="newDrawing()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors text-slate-300 hover:text-white">
+                <i data-lucide="file-plus" class="w-4 h-4"></i><span class="text-xs font-medium">New</span>
             </button>
-            <button onclick="saveDrawing()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors duration-200 text-slate-300 hover:text-white">
-                <i data-lucide="save" class="w-4 h-4"></i>
-                <span class="text-xs font-medium">Save</span>
+            <button onclick="saveDrawing()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition-colors text-slate-300 hover:text-white">
+                <i data-lucide="save" class="w-4 h-4"></i><span class="text-xs font-medium">Save</span>
             </button>
             <div class="w-px h-6 bg-slate-700/50"></div>
-            <button onclick="exportSVG()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-blue-600/10 hover:bg-blue-600/20 transition-colors duration-200 text-blue-400 hover:text-blue-300">
-                <i data-lucide="file-image" class="w-4 h-4"></i>
-                <span class="text-xs font-medium">SVG</span>
+            <button onclick="exportSVG()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-blue-600/10 hover:bg-blue-600/20 transition-colors text-blue-400 hover:text-blue-300">
+                <i data-lucide="file-image" class="w-4 h-4"></i><span class="text-xs font-medium">SVG</span>
             </button>
-            <button onclick="exportPDF()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-blue-600/10 hover:bg-blue-600/20 transition-colors duration-200 text-blue-400 hover:text-blue-300">
-                <i data-lucide="file-text" class="w-4 h-4"></i>
-                <span class="text-xs font-medium">PDF</span>
+            <button onclick="exportPDF()" class="flex items-center gap-x-2 px-4 py-2 rounded-lg bg-blue-600/10 hover:bg-blue-600/20 transition-colors text-blue-400 hover:text-blue-300">
+                <i data-lucide="file-text" class="w-4 h-4"></i><span class="text-xs font-medium">PDF</span>
             </button>
         </div>
     </nav>
 
     <div class="flex flex-1 overflow-hidden">
-        <!-- SIDEBAR -->
+        <!-- SIDEBAR (unchanged) -->
         <div class="w-80 bg-slate-900/30 backdrop-blur border-r border-slate-700/50 p-8 flex flex-col overflow-y-auto space-y-6">
             <div>
                 <div class="uppercase text-xs tracking-widest text-slate-400 font-semibold mb-4">Project Info</div>
@@ -150,26 +123,16 @@
                         </label>
                         <div id="logo-preview" class="mt-2 h-12 bg-slate-800/50 border border-slate-700 rounded-lg flex items-center justify-center text-xs text-slate-500"></div>
                     </div>
-                    <div>
-                        <label class="text-xs text-slate-400 font-medium block mb-2">Drawing Title <span class="text-red-400">*</span></label>
-                        <input type="text" id="meta-title" value="" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="text-xs text-slate-400 font-medium block mb-2">Drawing Number <span class="text-red-400">*</span></label>
-                        <input type="text" id="meta-dwg" value="" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="text-xs text-slate-400 font-medium block mb-2">Revision <span class="text-red-400">*</span></label>
-                        <input type="text" id="meta-rev" value="A" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="text-xs text-slate-400 font-medium block mb-2">Material</label>
-                        <input type="text" id="meta-material" value="" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="text-xs text-slate-400 font-medium block mb-2">Drawn By</label>
-                        <input type="text" id="meta-drawn-by" value="" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
-                    </div>
+                    <div><label class="text-xs text-slate-400 font-medium block mb-2">Drawing Title <span class="text-red-400">*</span></label>
+                        <input type="text" id="meta-title" value="" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"></div>
+                    <div><label class="text-xs text-slate-400 font-medium block mb-2">Drawing Number <span class="text-red-400">*</span></label>
+                        <input type="text" id="meta-dwg" value="" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"></div>
+                    <div><label class="text-xs text-slate-400 font-medium block mb-2">Revision <span class="text-red-400">*</span></label>
+                        <input type="text" id="meta-rev" value="A" onchange="validateRequired()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"></div>
+                    <div><label class="text-xs text-slate-400 font-medium block mb-2">Material</label>
+                        <input type="text" id="meta-material" value="" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"></div>
+                    <div><label class="text-xs text-slate-400 font-medium block mb-2">Drawn By</label>
+                        <input type="text" id="meta-drawn-by" value="" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500"></div>
                     <div>
                         <label class="text-xs text-slate-400 font-medium block mb-2">Orientation</label>
                         <select id="meta-orientation" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500">
@@ -193,14 +156,10 @@
                         </select>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="text-xs text-slate-400 font-medium block mb-2">Width (px)</label>
-                            <input type="number" id="paper-width" value="816" class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500">
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-400 font-medium block mb-2">Height (px)</label>
-                            <input type="number" id="paper-height" value="1056" class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500">
-                        </div>
+                        <div><label class="text-xs text-slate-400 font-medium block mb-2">Width (px)</label>
+                            <input type="number" id="paper-width" value="816" class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500"></div>
+                        <div><label class="text-xs text-slate-400 font-medium block mb-2">Height (px)</label>
+                            <input type="number" id="paper-height" value="1056" class="w-full px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500"></div>
                     </div>
                 </div>
             </div>
@@ -226,7 +185,9 @@
             </div>
 
             <div class="border-t border-slate-700/30 pt-6 mt-auto">
-                <button onclick="validateDrawing()" class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-lg text-sm font-semibold text-white transition-all duration-200 shadow-lg hover:shadow-xl">VALIDATE &amp; REFRESH</button>
+                <button onclick="validateDrawing()" class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 rounded-lg text-sm font-semibold text-white transition-all shadow-lg hover:shadow-xl">
+                    VALIDATE & REFRESH
+                </button>
             </div>
         </div>
 
@@ -285,7 +246,7 @@
                         <h3 class="text-base font-semibold text-emerald-400 uppercase tracking-wider mb-4">📌 Workflow: How to Use with AI</h3>
                         <div class="space-y-3">
                             <div class="bg-slate-800/30 border border-slate-700 rounded-lg p-4">
-                                <div class="font-medium text-slate-100 mb-2">🔄 Option 1: Prompt Grok &amp; Paste Code</div>
+                                <div class="font-medium text-slate-100 mb-2">🔄 Option 1: Prompt Grok & Paste Code</div>
                                 <ol class="text-xs text-slate-400 space-y-1 ml-4 list-decimal">
                                     <li>Describe drawing above</li>
                                     <li>Click "Copy Prompt for Grok"</li>
@@ -309,7 +270,7 @@
                         <h3 class="text-base font-semibold text-blue-400 uppercase tracking-wider mb-4">🎯 Pro Tips</h3>
                         <ul class="text-xs text-slate-400 space-y-2">
                             <li><span class="text-blue-400">1.</span> Be specific with exact dimensions and features</li>
-                            <li><span class="text-blue-400">2.</span> Reference the TEMPLATES tab for bordered frames</li>
+                            <li><span class="text-blue-400">2.</span> Start from a TEMPLATES tab frame</li>
                             <li><span class="text-blue-400">3.</span> Ask for leaders, notes, and clean dimensioning</li>
                             <li><span class="text-blue-400">4.</span> Use Option 2 (direct link) for fastest results</li>
                             <li><span class="text-blue-400">5.</span> Iterate: "Refine the previous drawing..."</li>
@@ -322,8 +283,8 @@
             <div id="rules-panel" class="flex-1 hidden flex-col p-8 bg-slate-900/50 backdrop-blur overflow-y-auto">
                 <div class="max-w-5xl mx-auto w-full space-y-10">
                     <div>
-                        <h2 class="text-2xl font-bold text-white mb-2">Paper Size Templates</h2>
-                        <p class="text-slate-400 mb-8">Click any template below to load a correctly proportioned drawing frame with professional border and example layout.</p>
+                        <h2 class="text-2xl font-bold text-white mb-2">Clean Frame Templates</h2>
+                        <p class="text-slate-400 mb-8">Each template provides only a thin outer border. Title block and metadata are handled automatically via the sidebar.</p>
 
                         <div class="template-grid">
                             <button onclick="insertTemplate('a_letter')" class="template-button">
@@ -331,11 +292,13 @@
                                 <div class="text-xs text-slate-400 mt-1">Letter 8.5 × 11"</div>
                                 <div class="text-[10px] text-slate-500 mt-1">816 × 1056 px</div>
                             </button>
+
                             <button onclick="insertTemplate('b_tabloid')" class="template-button">
                                 <div class="text-sm font-semibold text-slate-100">B Size</div>
                                 <div class="text-xs text-slate-400 mt-1">Tabloid 11 × 17"</div>
                                 <div class="text-[10px] text-slate-500 mt-1">1056 × 1632 px</div>
                             </button>
+
                             <button onclick="insertTemplate('d_arch')" class="template-button">
                                 <div class="text-sm font-semibold text-slate-100">D Size</div>
                                 <div class="text-xs text-slate-400 mt-1">ARCH D 24 × 36"</div>
@@ -349,7 +312,7 @@
     </div>
 
     <div class="h-10 bg-slate-900/50 backdrop-blur border-t border-slate-700/50 px-8 flex items-center justify-between text-[11px] text-slate-500 font-mono">
-        <div class="flex-1">vibedraft v0.4</div>
+        <div class="flex-1">vibedraft v0.5</div>
     </div>
 
     <script>
@@ -358,29 +321,28 @@
         let currentSVG = '', currentUnits = 'inches', zoomLevel = 1, isDragging = false, startPanX = 0, startPanY = 0, currentLogo = '';
 
         const PaperSizes = {
-            letter: { width: 816, height: 1056 },
+            letter:  { width: 816,  height: 1056 },
             tabloid: { width: 1056, height: 1632 },
-            arch_d: { width: 2304, height: 3456 },
-            custom: { width: 816, height: 1056 }
+            arch_d:  { width: 2304, height: 3456 },
+            custom:  { width: 816,  height: 1056 }
         };
 
         function uploadLogo() {
             const input = document.getElementById('logo-upload');
-            if (!input.files[0]) return;
+            if (!input.files?.[0]) return;
             const reader = new FileReader();
-            reader.onload = function (e) {
+            reader.onload = e => {
                 currentLogo = e.target.result;
-                const preview = document.getElementById('logo-preview');
-                preview.innerHTML = `<img src="${currentLogo}" style="max-height: 100%; max-width: 100%; object-fit: contain;">`;
+                document.getElementById('logo-preview').innerHTML = `<img src="${currentLogo}" style="max-height:100%;max-width:100%;object-fit:contain;">`;
                 renderTitleBlock();
             };
             reader.readAsDataURL(input.files[0]);
         }
 
         function validateRequired() {
-            const title = document.getElementById('meta-title').value.trim();
-            const dwg = document.getElementById('meta-dwg').value.trim();
-            const rev = document.getElementById('meta-rev').value.trim();
+            const title = document.getElementById('meta-title')?.value?.trim();
+            const dwg = document.getElementById('meta-dwg')?.value?.trim();
+            const rev = document.getElementById('meta-rev')?.value?.trim();
             if (!title || !dwg || !rev) {
                 alert('⚠️ Title, Drawing Number, and Revision are required.');
                 return false;
@@ -388,24 +350,21 @@
             return true;
         }
 
-        function validateBeforeExport() {
-            return validateRequired() && currentSVG;
-        }
-
         function changePaperSize() {
-            const size = document.getElementById('paper-size').value;
-            if (PaperSizes[size]) {
+            const size = document.getElementById('paper-size')?.value;
+            if (size && PaperSizes[size]) {
                 document.getElementById('paper-width').value = PaperSizes[size].width;
                 document.getElementById('paper-height').value = PaperSizes[size].height;
             }
             updateSVGSize();
+            renderViewer(); // refresh title block width too
         }
 
         function updateSVGSize() {
-            const w = parseFloat(document.getElementById('paper-width').value) || 816;
-            const h = parseFloat(document.getElementById('paper-height').value) || 1056;
+            const w = parseFloat(document.getElementById('paper-width')?.value) || 816;
+            const h = parseFloat(document.getElementById('paper-height')?.value) || 1056;
             const container = document.getElementById('svg-container');
-            const svg = container.querySelector('svg');
+            const svg = container?.querySelector('svg');
             if (svg) {
                 svg.setAttribute('width', w);
                 svg.setAttribute('height', h);
@@ -416,16 +375,16 @@
 
         const SVGValidator = {
             errors: [],
-            validate: function (s) {
+            validate(s) {
                 this.errors = [];
                 try {
-                    const p = new DOMParser();
-                    const d = p.parseFromString(s, 'text/xml');
-                    if (d.getElementsByTagName('parsererror').length > 0) {
-                        this.errors.push('Invalid XML');
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(s, 'text/xml');
+                    if (doc.getElementsByTagName('parsererror').length > 0) {
+                        this.errors.push('Invalid XML structure');
                         return false;
                     }
-                    return !!d.querySelector('svg');
+                    return !!doc.querySelector('svg');
                 } catch (e) {
                     this.errors.push(e.message);
                     return false;
@@ -433,60 +392,18 @@
             }
         };
 
-        // IMPROVED TEMPLATES – professional line weights, correct proportions, clear drawing area
+        // CLEAN MINIMAL TEMPLATES – only thin border, no content inside
         const Templates = {
             a_letter: () => `<svg width="816" height="1056" viewBox="0 0 816 1056" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-  <!-- Professional outer border -->
-  <rect x="32" y="32" width="752" height="992" rx="18" fill="#f9fafb" stroke="#111827" stroke-width="26"/>
-  <!-- Sample part (thick object lines) -->
-  <rect x="148" y="148" width="520" height="340" rx="12" fill="#e2e8f0" stroke="#1e2937" stroke-width="18"/>
-  <!-- Holes -->
-  <circle cx="280" cy="280" r="38" fill="none" stroke="#1e2937" stroke-width="14"/>
-  <circle cx="536" cy="280" r="38" fill="none" stroke="#1e2937" stroke-width="14"/>
-  <!-- Dimension lines (thin dashed) -->
-  <line x1="120" y1="520" x2="120" y2="148" stroke="#64748b" stroke-width="7" stroke-dasharray="10 6"/>
-  <text x="95" y="340" font-family="sans-serif" font-size="29" fill="#1e2937" text-anchor="middle" font-weight="600" transform="rotate(-90 95 340)">8.00"</text>
-  <line x1="148" y1="530" x2="668" y2="530" stroke="#64748b" stroke-width="7" stroke-dasharray="10 6"/>
-  <text x="408" y="565" font-family="sans-serif" font-size="31" fill="#1e2937" text-anchor="middle" font-weight="600">13.00"</text>
-  <!-- Title block placeholder -->
-  <rect x="520" y="860" width="244" height="148" fill="#e5e7eb" stroke="#6b7280" stroke-width="7"/>
-  <text x="642" y="940" font-family="sans-serif" font-size="26" fill="#374151" text-anchor="middle">TITLE BLOCK</text>
+  <rect x="32" y="32" width="752" height="992" rx="12" stroke="#111827" stroke-width="4"/>
 </svg>`,
 
             b_tabloid: () => `<svg width="1056" height="1632" viewBox="0 0 1056 1632" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-  <!-- Professional outer border -->
-  <rect x="44" y="44" width="968" height="1544" rx="24" fill="#f9fafb" stroke="#111827" stroke-width="34"/>
-  <!-- Sample part -->
-  <rect x="180" y="210" width="696" height="460" rx="18" fill="#e2e8f0" stroke="#1e2937" stroke-width="24"/>
-  <!-- Holes -->
-  <circle cx="380" cy="410" r="52" fill="none" stroke="#1e2937" stroke-width="18"/>
-  <circle cx="676" cy="410" r="52" fill="none" stroke="#1e2937" stroke-width="18"/>
-  <!-- Dimensions -->
-  <line x1="140" y1="720" x2="140" y2="210" stroke="#64748b" stroke-width="9" stroke-dasharray="12 7"/>
-  <text x="110" y="470" font-family="sans-serif" font-size="38" fill="#1e2937" text-anchor="middle" font-weight="600" transform="rotate(-90 110 470)">11.50"</text>
-  <line x1="180" y1="730" x2="876" y2="730" stroke="#64748b" stroke-width="9" stroke-dasharray="12 7"/>
-  <text x="528" y="775" font-family="sans-serif" font-size="41" fill="#1e2937" text-anchor="middle" font-weight="600">17.40"</text>
-  <!-- Title block placeholder -->
-  <rect x="680" y="1320" width="320" height="190" fill="#e5e7eb" stroke="#6b7280" stroke-width="9"/>
-  <text x="840" y="1430" font-family="sans-serif" font-size="36" fill="#374151" text-anchor="middle">TITLE BLOCK</text>
+  <rect x="44" y="44" width="968" height="1544" rx="16" stroke="#111827" stroke-width="4"/>
 </svg>`,
 
             d_arch: () => `<svg width="2304" height="3456" viewBox="0 0 2304 3456" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
-  <!-- Professional outer border -->
-  <rect x="88" y="88" width="2128" height="3280" rx="48" fill="#f9fafb" stroke="#111827" stroke-width="68"/>
-  <!-- Sample part -->
-  <rect x="380" y="420" width="1544" height="1020" rx="36" fill="#e2e8f0" stroke="#1e2937" stroke-width="52"/>
-  <!-- Holes -->
-  <circle cx="780" cy="860" r="110" fill="none" stroke="#1e2937" stroke-width="38"/>
-  <circle cx="1524" cy="860" r="110" fill="none" stroke="#1e2937" stroke-width="38"/>
-  <!-- Dimensions -->
-  <line x1="280" y1="1550" x2="280" y2="420" stroke="#64748b" stroke-width="18" stroke-dasharray="24 14"/>
-  <text x="220" y="990" font-family="sans-serif" font-size="82" fill="#1e2937" text-anchor="middle" font-weight="600" transform="rotate(-90 220 990)">25.50"</text>
-  <line x1="380" y1="1580" x2="1924" y2="1580" stroke="#64748b" stroke-width="18" stroke-dasharray="24 14"/>
-  <text x="1152" y="1660" font-family="sans-serif" font-size="88" fill="#1e2937" text-anchor="middle" font-weight="600">38.60"</text>
-  <!-- Title block placeholder -->
-  <rect x="1480" y="2800" width="680" height="420" fill="#e5e7eb" stroke="#6b7280" stroke-width="18"/>
-  <text x="1920" y="3050" font-family="sans-serif" font-size="78" fill="#374151" text-anchor="middle">TITLE BLOCK</text>
+  <rect x="88" y="88" width="2128" height="3280" rx="32" stroke="#111827" stroke-width="4"/>
 </svg>`
         };
 
@@ -510,15 +427,18 @@
         function renderTitleBlock() {
             const t = document.getElementById('title-block');
             if (!t) return;
-            const title = document.getElementById('meta-title').value || 'Untitled Drawing';
-            const dwg = document.getElementById('meta-dwg').value || 'DWG-001';
-            const rev = document.getElementById('meta-rev').value || 'A';
-            const mat = document.getElementById('meta-material').value || '';
-            const scale = document.getElementById('meta-scale').value || '1:1';
-            const drawnBy = document.getElementById('meta-drawn-by').value || '—';
+
+            const title  = document.getElementById('meta-title')?.value || 'Untitled Drawing';
+            const dwg    = document.getElementById('meta-dwg')?.value || 'DWG-001';
+            const rev    = document.getElementById('meta-rev')?.value || 'A';
+            const mat    = document.getElementById('meta-material')?.value || '';
+            const scale  = document.getElementById('meta-scale')?.value || '1:1';
+            const drawn  = document.getElementById('meta-drawn-by')?.value || '—';
             let logoHtml = currentLogo ? `<img src="${currentLogo}" style="height:64px;object-fit:contain;"/>` : '';
-            const w = parseFloat(document.getElementById('paper-width').value) || 816;
+
+            const w = parseFloat(document.getElementById('paper-width')?.value) || 816;
             t.style.width = `${w}px`;
+
             t.innerHTML = `
                 <div class="col-span-12 flex justify-between items-start border-b border-slate-300 pb-5">
                     <div class="flex items-start gap-5">
@@ -534,7 +454,7 @@
                     </div>
                 </div>
                 <div class="col-span-12 text-xs pt-5 text-slate-600 grid grid-cols-3">
-                    <div>DRAWN BY: ${drawnBy}</div>
+                    <div>DRAWN BY: ${drawn}</div>
                     <div class="text-center">DATE: ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
                     <div class="text-right">vibedraft</div>
                 </div>`;
@@ -542,20 +462,21 @@
 
         function switchTab(n) {
             document.querySelectorAll('[id^="tab-"]').forEach(b => { if (b) b.classList.remove('tab-active'); });
-            const active = document.getElementById(`tab-${n}`);
-            if (active) active.classList.add('tab-active');
+            const activeTab = document.getElementById(`tab-${n}`);
+            if (activeTab) activeTab.classList.add('tab-active');
 
-            const panelIds = ['viewer-panel','code-panel','three-panel','ai-panel','rules-panel'];
-            panelIds.forEach(id => {
+            const panels = ['viewer-panel','code-panel','three-panel','ai-panel','rules-panel'];
+            panels.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.add('hidden');
             });
-            const toShow = document.getElementById(panelIds[n]);
+
+            const toShow = document.getElementById(panels[n]);
             if (toShow) toShow.classList.remove('hidden');
         }
 
         function loadCodeFromTextarea() {
-            const code = document.getElementById('code-text').value.trim();
+            const code = document.getElementById('code-text')?.value?.trim();
             if (!code) return alert('Paste SVG code first');
             if (SVGValidator.validate(code)) {
                 extractAndApplyMetadata(code);
@@ -568,33 +489,33 @@
             }
         }
 
-        function extractAndApplyMetadata(svgCode) {
+        function extractAndApplyMetadata(code) {
             const patterns = {
-                title: /<!-- VIBEDRAFT_TITLE: (.*?) -->/,
-                dwg: /<!-- VIBEDRAFT_NUMBER: (.*?) -->/,
-                rev: /<!-- VIBEDRAFT_REVISION: (.*?) -->/,
-                material: /<!-- VIBEDRAFT_MATERIAL: (.*?) -->/,
-                scale: /<!-- VIBEDRAFT_SCALE: (.*?) -->/,
-                drawnBy: /<!-- VIBEDRAFT_DRAWN_BY: (.*?) -->/,
-                orientation: /<!-- VIBEDRAFT_ORIENTATION: (.*?) -->/
+                title:      /<!-- VIBEDRAFT_TITLE: (.*?) -->/,
+                dwg:        /<!-- VIBEDRAFT_NUMBER: (.*?) -->/,
+                rev:        /<!-- VIBEDRAFT_REVISION: (.*?) -->/,
+                material:   /<!-- VIBEDRAFT_MATERIAL: (.*?) -->/,
+                scale:      /<!-- VIBEDRAFT_SCALE: (.*?) -->/,
+                drawnBy:    /<!-- VIBEDRAFT_DRAWN_BY: (.*?) -->/,
+                orientation:/<!-- VIBEDRAFT_ORIENTATION: (.*?) -->/
             };
-            for (let key in patterns) {
-                const m = svgCode.match(patterns[key]);
-                if (m) {
+            for (const [key, regex] of Object.entries(patterns)) {
+                const match = code.match(regex);
+                if (match) {
                     const el = document.getElementById(key === 'dwg' ? 'meta-dwg' : `meta-${key}`);
-                    if (el) el.value = m[1];
+                    if (el) el.value = match[1];
                 }
             }
         }
 
         function getMetadataComments() {
-            return `<!-- VIBEDRAFT_TITLE: ${document.getElementById('meta-title').value} -->
-<!-- VIBEDRAFT_NUMBER: ${document.getElementById('meta-dwg').value} -->
-<!-- VIBEDRAFT_REVISION: ${document.getElementById('meta-rev').value} -->
-<!-- VIBEDRAFT_MATERIAL: ${document.getElementById('meta-material').value} -->
-<!-- VIBEDRAFT_SCALE: ${document.getElementById('meta-scale').value} -->
-<!-- VIBEDRAFT_DRAWN_BY: ${document.getElementById('meta-drawn-by').value} -->
-<!-- VIBEDRAFT_ORIENTATION: ${document.getElementById('meta-orientation').value} -->\n`;
+            return `<!-- VIBEDRAFT_TITLE: ${document.getElementById('meta-title')?.value || ''} -->
+<!-- VIBEDRAFT_NUMBER: ${document.getElementById('meta-dwg')?.value || ''} -->
+<!-- VIBEDRAFT_REVISION: ${document.getElementById('meta-rev')?.value || ''} -->
+<!-- VIBEDRAFT_MATERIAL: ${document.getElementById('meta-material')?.value || ''} -->
+<!-- VIBEDRAFT_SCALE: ${document.getElementById('meta-scale')?.value || ''} -->
+<!-- VIBEDRAFT_DRAWN_BY: ${document.getElementById('meta-drawn-by')?.value || ''} -->
+<!-- VIBEDRAFT_ORIENTATION: ${document.getElementById('meta-orientation')?.value || ''} -->\n`;
         }
 
         function copyCodeWithMetadata() {
@@ -610,47 +531,45 @@
         }
 
         function copyAIPromptWithMetadata() {
-            const desc = document.getElementById('ai-prompt').value.trim();
+            const desc = document.getElementById('ai-prompt')?.value?.trim();
             if (!desc) return alert('Describe your drawing first');
             const meta = getMetadataComments();
-            const prompt = `Create a clean professional technical drawing in SVG format for vibedraft.
+            const prompt = `Create a clean technical drawing in SVG format using the vibedraft tool.
 
-CRITICAL: Start with these exact metadata comments (before <svg>):
+CRITICAL: Include these exact metadata comments at the very top (before <svg>):
 ${meta}
-
-Use the exact bordered frame style from the TEMPLATES tab (thick outer border, safe drawing area).
 
 DESCRIPTION:
 ${desc}
 
-Return ONLY the full SVG code with metadata comments at the very top.`;
+Use thin outer border matching the TEMPLATES tab style. Keep drawing area empty except for the actual geometry you create. Return ONLY the full SVG code.`;
             navigator.clipboard.writeText(prompt);
             alert('✓ Prompt copied! Paste into Grok → get SVG → paste in CODE tab → LOAD CODE');
         }
 
         function copyDirectLink() {
             const link = window.location.href;
-            const desc = document.getElementById('ai-prompt').value.trim() || "Create a technical drawing";
-            const full = `Please use this vibedraft tool and create the drawing:
+            const desc = document.getElementById('ai-prompt')?.value?.trim() || "Create a technical drawing";
+            const full = `Please open this vibedraft tool and create the drawing:
 
 ${link}
 
 Request: ${desc}
 
-1. Open the link
-2. Go to TEMPLATES tab and choose size
+1. Open link
+2. Choose size from TEMPLATES tab
 3. Fill sidebar metadata
-4. Build / refine the drawing
-5. Export final SVG or PDF
+4. Generate / paste drawing inside the frame
+5. Export SVG or PDF
 
-Thank you!`;
+Thanks!`;
             navigator.clipboard.writeText(full);
             alert('✓ Direct link + instructions copied!');
         }
 
         function copyGrokPrompt() {
             if (!currentSVG) return alert('Create or load a drawing first');
-            const p = `Refine this technical drawing. Keep the thick bordered frame and metadata comments. Improve dimensions, add leaders if needed. Return ONLY the updated SVG code.\n\n\`\`\`svg\n${currentSVG}\n\`\`\``;
+            const p = `Refine this technical drawing. Keep the thin outer border and metadata comments. Improve layout, add proper dimensions and leaders. Return ONLY the updated SVG code.\n\n\`\`\`svg\n${currentSVG}\n\`\`\``;
             navigator.clipboard.writeText(p);
             alert('✓ Refinement prompt copied');
         }
@@ -659,21 +578,22 @@ Thank you!`;
             if (window.threeInitialized) return;
             window.threeInitialized = true;
             const canvas = document.getElementById('three-canvas');
+            if (!canvas) return;
             const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-            renderer.setSize(window.innerWidth * 0.68, window.innerHeight * 0.78);
+            renderer.setSize(window.innerWidth * 0.7, window.innerHeight * 0.8);
             const scene = new THREE.Scene();
             scene.background = new THREE.Color(0x0a1428);
             const camera = new THREE.PerspectiveCamera(45, 1.6, 10, 3000);
-            camera.position.set(800, 600, 1100);
-            const light = new THREE.DirectionalLight(0xffffff, 1.6);
-            light.position.set(900, 1200, 1000);
+            camera.position.set(700, 500, 1000);
+            const light = new THREE.DirectionalLight(0xffffff, 1.5);
+            light.position.set(800, 1100, 900);
             scene.add(light);
             scene.add(new THREE.AmbientLight(0xaaaaaa));
-            const box = new THREE.Mesh(new THREE.BoxGeometry(520, 160, 680), new THREE.MeshPhongMaterial({ color: 0x64748b }));
+            const box = new THREE.Mesh(new THREE.BoxGeometry(480, 140, 620), new THREE.MeshPhongMaterial({ color: 0x64748b }));
             scene.add(box);
             function animate() {
                 requestAnimationFrame(animate);
-                box.rotation.y += 0.001;
+                box.rotation.y += 0.0012;
                 renderer.render(scene, camera);
             }
             animate();
@@ -694,12 +614,13 @@ Thank you!`;
 
         function validateDrawing() {
             renderTitleBlock();
-            alert('✅ Metadata & viewport refreshed');
+            alert('Metadata and viewport refreshed');
         }
 
         function validateAndShowErrors() {
-            const s = document.getElementById('code-text').value;
-            const valid = SVGValidator.validate(s);
+            const code = document.getElementById('code-text')?.value;
+            if (!code) return;
+            const valid = SVGValidator.validate(code);
             const panel = document.getElementById('validation-panel');
             const output = document.getElementById('validation-output');
             if (valid) {
@@ -714,7 +635,7 @@ Thank you!`;
         }
 
         function newDrawing() {
-            if (confirm('Start a fresh drawing?')) {
+            if (confirm('Start fresh? Current drawing will be replaced.')) {
                 currentSVG = Templates.a_letter();
                 renderViewer();
                 switchTab(0);
@@ -727,53 +648,53 @@ Thank you!`;
                 svg: currentSVG,
                 logo: currentLogo,
                 meta: {
-                    title: document.getElementById('meta-title').value,
-                    dwg: document.getElementById('meta-dwg').value,
-                    rev: document.getElementById('meta-rev').value,
-                    material: document.getElementById('meta-material').value,
-                    scale: document.getElementById('meta-scale').value,
-                    drawnBy: document.getElementById('meta-drawn-by').value,
-                    orientation: document.getElementById('meta-orientation').value,
-                    paperSize: document.getElementById('paper-size').value
+                    title: document.getElementById('meta-title')?.value || '',
+                    dwg: document.getElementById('meta-dwg')?.value || '',
+                    rev: document.getElementById('meta-rev')?.value || '',
+                    material: document.getElementById('meta-material')?.value || '',
+                    scale: document.getElementById('meta-scale')?.value || '',
+                    drawnBy: document.getElementById('meta-drawn-by')?.value || '',
+                    orientation: document.getElementById('meta-orientation')?.value || 'landscape',
+                    paperSize: document.getElementById('paper-size')?.value || 'letter'
                 }
             };
             localStorage.setItem('vibedraft_current', JSON.stringify(data));
-            alert('✓ Saved to browser');
+            alert('✓ Drawing saved to browser storage');
         }
 
         function exportSVG() {
-            if (!validateBeforeExport()) return;
+            if (!validateRequired() || !currentSVG) return;
             const blob = new Blob([currentSVG], { type: 'image/svg+xml' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${document.getElementById('meta-dwg').value || 'drawing'}.svg`;
+            a.download = `${document.getElementById('meta-dwg')?.value || 'drawing'}.svg`;
             a.click();
         }
 
         async function exportPDF() {
-            if (!validateBeforeExport()) return;
-            const orientation = document.getElementById('meta-orientation').value === 'landscape' ? 'l' : 'p';
-            let sizeKey = document.getElementById('paper-size').value;
-            let pdf;
+            if (!validateRequired() || !currentSVG) return alert('Missing required fields or no drawing');
+            const orientation = document.getElementById('meta-orientation')?.value === 'landscape' ? 'l' : 'p';
+            let sizeKey = document.getElementById('paper-size')?.value || 'letter';
             const { jsPDF } = window.jspdf;
+            let pdf;
 
             if (sizeKey === 'arch_d') {
-                pdf = new jsPDF(orientation, 'mm', [609.6, 914.4]); // 24×36 inches
+                pdf = new jsPDF(orientation, 'mm', [609.6, 914.4]); // 24×36 in
             } else {
                 pdf = new jsPDF(orientation, 'mm', sizeKey === 'tabloid' ? 'tabloid' : 'letter');
             }
 
             let y = 15;
             if (currentLogo) {
-                pdf.addImage(currentLogo, 'PNG', 15, y, 30, 15);
+                pdf.addImage(currentLogo, 'PNG', 15, y, 28, 14);
                 y += 18;
             }
             pdf.setFontSize(20);
-            pdf.text(document.getElementById('meta-title').value || 'Technical Drawing', 15, y);
-            y += 10;
+            pdf.text(document.getElementById('meta-title')?.value || 'Technical Drawing', 15, y);
+            y += 12;
             pdf.setFontSize(11);
-            pdf.text(`${document.getElementById('meta-dwg').value || '—'} • REV ${document.getElementById('meta-rev').value || '—'}`, 15, y);
+            pdf.text(`${document.getElementById('meta-dwg')?.value || '—'} • REV ${document.getElementById('meta-rev')?.value || '—'}`, 15, y);
             y += 15;
 
             const wrapper = document.getElementById('svg-wrapper');
@@ -787,8 +708,8 @@ Thank you!`;
                 ih = ph - y - 30;
                 iw = ih * (canvas.width / canvas.height);
             }
-            pdf.addImage(imgData, 'PNG', (pw - iw) / 2, y, iw, ih);
-            pdf.save(`${document.getElementById('meta-dwg').value || 'drawing'}.pdf`);
+            pdf.addImage(imgData, 'PNG', (pw - iw)/2, y, iw, ih);
+            pdf.save(`${document.getElementById('meta-dwg')?.value || 'drawing'}.pdf`);
         }
 
         function loadFromJSON() {
@@ -802,9 +723,9 @@ Thank you!`;
                     document.getElementById('logo-preview').innerHTML = `<img src="${currentLogo}" style="max-height:100%;max-width:100%;object-fit:contain;">`;
                 }
                 if (d.meta) {
-                    Object.keys(d.meta).forEach(k => {
+                    ['title','dwg','rev','material','scale','drawnBy','orientation'].forEach(k => {
                         const el = document.getElementById(k === 'dwg' ? 'meta-dwg' : `meta-${k}`);
-                        if (el) el.value = d.meta[k] || '';
+                        if (el && d.meta[k] !== undefined) el.value = d.meta[k];
                     });
                     if (d.meta.paperSize) {
                         document.getElementById('paper-size').value = d.meta.paperSize;
@@ -814,12 +735,12 @@ Thank you!`;
                 renderViewer();
                 switchTab(0);
             } catch (e) {
-                alert('❌ Invalid JSON');
+                alert('Invalid JSON format');
             }
         }
 
         function clearAllData() {
-            if (confirm('Clear everything and start fresh?')) {
+            if (confirm('Clear all data and start fresh?')) {
                 localStorage.removeItem('vibedraft_current');
                 location.reload();
             }
@@ -837,7 +758,7 @@ Thank you!`;
                     if (d.meta) {
                         ['title','dwg','rev','material','scale','drawnBy','orientation'].forEach(k => {
                             const el = document.getElementById(k === 'dwg' ? 'meta-dwg' : `meta-${k}`);
-                            if (el && d.meta[k]) el.value = d.meta[k];
+                            if (el && d.meta[k] !== undefined) el.value = d.meta[k];
                         });
                         if (d.meta.paperSize) {
                             document.getElementById('paper-size').value = d.meta.paperSize;
@@ -853,29 +774,30 @@ Thank you!`;
             switchTab(0);
             setUnits(0);
 
-            // Pan & zoom
             const wrapper = document.getElementById('svg-wrapper');
-            wrapper.addEventListener('wheel', e => {
-                e.preventDefault();
-                zoomLevel = Math.max(0.4, Math.min(4, zoomLevel + e.deltaY * -0.0015));
-                wrapper.style.transform = `scale(${zoomLevel})`;
-            });
+            if (wrapper) {
+                wrapper.addEventListener('wheel', e => {
+                    e.preventDefault();
+                    zoomLevel = Math.max(0.4, Math.min(4, zoomLevel + e.deltaY * -0.0015));
+                    wrapper.style.transform = `scale(${zoomLevel})`;
+                });
 
-            let panX = 0, panY = 0;
-            wrapper.addEventListener('mousedown', e => {
-                if (e.button === 0) {
-                    isDragging = true;
-                    startPanX = e.clientX - panX;
-                    startPanY = e.clientY - panY;
-                }
-            });
-            window.addEventListener('mousemove', e => {
-                if (!isDragging) return;
-                panX = e.clientX - startPanX;
-                panY = e.clientY - startPanY;
-                wrapper.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomLevel})`;
-            });
-            window.addEventListener('mouseup', () => isDragging = false);
+                let panX = 0, panY = 0;
+                wrapper.addEventListener('mousedown', e => {
+                    if (e.button === 0) {
+                        isDragging = true;
+                        startPanX = e.clientX - panX;
+                        startPanY = e.clientY - panY;
+                    }
+                });
+                window.addEventListener('mousemove', e => {
+                    if (!isDragging) return;
+                    panX = e.clientX - startPanX;
+                    panY = e.clientY - startPanY;
+                    wrapper.style.transform = `translate(${panX}px, ${panY}px) scale(${zoomLevel})`;
+                });
+                window.addEventListener('mouseup', () => isDragging = false);
+            }
         }
 
         window.onload = initializeApp;
