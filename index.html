@@ -545,10 +545,9 @@ REQUIRED RETURN FORMAT:
 
 CRITICAL REQUIREMENTS:
 1. Scale: ${scale} - ALL dimensions match
-2. Tolerances: ±0.005" (note on drawing)
-3. Leaders on ALL annotations
-4. NO overlapping annotations
-5. ASME Y14.5-2018 compliant
+2. Leaders on ALL annotations
+3. NO overlapping annotations
+4. drawing bordered with .07 black line
 
 Return ONLY SVG with metadata comments first.`; navigator.clipboard.writeText(prompt); alert('✓ Prompt copied!\n\nTo get fields to auto-update:\n1. Copy SVG from Grok\n2. Paste in CODE tab\n3. Click LOAD CODE\n\n✓ Title/Number will auto-load!\n\nIf not:\n• SVG needs metadata comments\n• Ask Grok: "Include VIBEDRAFT metadata comments"\n• Or fill sidebar manually');
         }
@@ -562,18 +561,28 @@ Drawing Description: ${desc}
 
 Please:
 1. Visit the vibedraft link
-2. Click the AI tab
-3. Load paper size (Tabloid recommended)
-4. Select ASME standards (Standard thickness)
+2. Click the AI tab Review workflow and return format
+3. Load paper size
+4. 
 5. Go to CODE tab, create the drawing as SVG
 6. Export as PDF or SVG using the buttons at top
 7. Send me the final PDF/SVG
 
-The tool handles:
-- Professional ASME formatting
-- Title blocks with your logo
-- All metadata
-- PDF/SVG export
+/*
+REQUIRED RETURN FORMAT (removing comments)
+//<!-- VIBEDRAFT_TITLE: ${title} -->
+//<!-- VIBEDRAFT_TITLE: ${title} -->
+//<!-- VIBEDRAFT_NUMBER: ${dwg} -->
+//<!-- VIBEDRAFT_NUMBER: ${dwg} -->
+//<!-- VIBEDRAFT_REVISION: ${rev} -->
+//<!-- VIBEDRAFT_MATERIAL: ${material} -->
+//<!-- VIBEDRAFT_SCALE: ${scale} -->
+//<!-- VIBEDRAFT_DRAWN_BY: ${drawnBy} -->
+//<!-- VIBEDRAFT_ORIENTATION: ${orient} -->
+<svg>
+[drawing]
+</svg>
+*/
 
 Make it production-ready!`; navigator.clipboard.writeText(fullPrompt); alert('✓ Full instructions copied!\n\nPaste this into your AI chat and it will:\n1. Visit vibedraft\n2. Create your drawing\n3. Export the final PDF/SVG\n\nPerfect for automated workflows!');
         }
@@ -596,3 +605,4 @@ Make it production-ready!`; navigator.clipboard.writeText(fullPrompt); alert('�
     </script>
 </body>
 </html>
+
