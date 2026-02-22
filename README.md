@@ -5,9 +5,8 @@
 - Live SVG viewer/editor
 - Units: inches / mm (real-time scale)
 - Neutral drafting standards
-- 8 quick templates
-- Validation engine (dimensions, GD&T, viewBox safety)
-- One-click Grok prompt + direct AI link
+- quick templates for title block
+- One-click spec driven prompt generator+ direct AI link
 - SVG + PDF export
 
 Just open `index.html` or visit https://medicinalsheep.github.io/vibedraft/
