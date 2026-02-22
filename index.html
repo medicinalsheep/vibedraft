@@ -49,15 +49,15 @@
 
         .template-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 0.9rem;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 1rem;
         }
 
         .template-button {
             background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
             border: 1px solid #475569;
             border-radius: 10px;
-            padding: 1.1rem 0.8rem;
+            padding: 1.2rem 0.9rem;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
@@ -68,6 +68,12 @@
             border-color: #60a5fa;
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(96,165,250,0.18);
+        }
+
+        input:disabled, textarea:disabled, select:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #334155 !important;
         }
 
         input, textarea, select { transition: all 0.2s ease; }
@@ -82,7 +88,7 @@
                 <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-white font-bold logo-font text-lg shadow-lg">VD</div>
                 <div>
                     <h1 class="logo-font text-3xl font-bold tracking-tight text-white">vibedraft</h1>
-                    <span class="text-xs font-medium text-cyan-400">v0.5</span>
+                    <span class="text-xs font-medium text-cyan-400">v0.6</span>
                 </div>
             </div>
             <div class="flex gap-x-8 text-sm font-medium">
@@ -112,8 +118,15 @@
 
     <div class="flex flex-1 overflow-hidden">
         <!-- SIDEBAR -->
-        <div class="w-80 bg-slate-900/30 backdrop-blur border-r border-slate-700/50 p-8 flex flex-col overflow-y-auto space-y-6">
-            <div>
+        <div class="w-80 bg-slate-900/30 backdrop-blur border-r border-slate-700/50 p-6 flex flex-col overflow-y-auto space-y-6">
+            <div class="flex items-center justify-between">
+                <label class="text-sm font-medium text-slate-300 flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="include-title-block" checked onchange="toggleTitleBlock()">
+                    <span>Include Title Block & Metadata</span>
+                </label>
+            </div>
+
+            <div id="project-info-section">
                 <div class="uppercase text-xs tracking-widest text-slate-400 font-semibold mb-4">Project Info</div>
                 <div class="space-y-4">
                     <div>
@@ -145,13 +158,6 @@
                     <div>
                         <label class="text-xs text-slate-400 font-medium block mb-2">Drawn By</label>
                         <input type="text" id="meta-drawn-by" value="" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="text-xs text-slate-400 font-medium block mb-2">Orientation</label>
-                        <select id="meta-orientation" onchange="updatePaperDimensions()" class="w-full px-4 py-2.5 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-slate-100 focus:outline-none focus:border-blue-500">
-                            <option value="landscape" selected>Landscape</option>
-                            <option value="portrait">Portrait</option>
-                        </select>
                     </div>
                 </div>
             </div>
@@ -301,23 +307,34 @@
                 <div class="max-w-5xl mx-auto w-full space-y-10">
                     <div>
                         <h2 class="text-2xl font-bold text-white mb-2">Clean Frame Templates</h2>
-                        <p class="text-slate-400 mb-8">Each template provides only a thin outer border. Title block and metadata are handled automatically via the sidebar.</p>
+                        <p class="text-slate-400 mb-8">Choose version with or without reserved title block space at bottom.</p>
 
                         <div class="template-grid">
-                            <button onclick="insertTemplate('a_letter')" class="template-button">
-                                <div class="text-sm font-semibold text-slate-100">A Size</div>
-                                <div class="text-xs text-slate-400 mt-1">Letter 11 × 8.5" (landscape)</div>
-                                <div class="text-[10px] text-slate-500 mt-1">1056 × 816 px</div>
+                            <button onclick="insertTemplate('a_letter_with')" class="template-button">
+                                <div class="text-sm font-semibold text-slate-100">A Size – with title block</div>
+                                <div class="text-xs text-slate-400 mt-1">1056 × 816 px</div>
                             </button>
-                            <button onclick="insertTemplate('b_tabloid')" class="template-button">
-                                <div class="text-sm font-semibold text-slate-100">B Size</div>
-                                <div class="text-xs text-slate-400 mt-1">Tabloid 17 × 11" (landscape)</div>
-                                <div class="text-[10px] text-slate-500 mt-1">1632 × 1056 px</div>
+                            <button onclick="insertTemplate('a_letter_no')" class="template-button">
+                                <div class="text-sm font-semibold text-slate-100">A Size – no title block</div>
+                                <div class="text-xs text-slate-400 mt-1">1056 × 816 px</div>
                             </button>
-                            <button onclick="insertTemplate('d_arch')" class="template-button">
-                                <div class="text-sm font-semibold text-slate-100">D Size</div>
-                                <div class="text-xs text-slate-400 mt-1">ARCH D 36 × 24" (landscape)</div>
-                                <div class="text-[10px] text-slate-500 mt-1">3456 × 2304 px</div>
+
+                            <button onclick="insertTemplate('b_tabloid_with')" class="template-button">
+                                <div class="text-sm font-semibold text-slate-100">B Size – with title block</div>
+                                <div class="text-xs text-slate-400 mt-1">1632 × 1056 px</div>
+                            </button>
+                            <button onclick="insertTemplate('b_tabloid_no')" class="template-button">
+                                <div class="text-sm font-semibold text-slate-100">B Size – no title block</div>
+                                <div class="text-xs text-slate-400 mt-1">1632 × 1056 px</div>
+                            </button>
+
+                            <button onclick="insertTemplate('d_arch_with')" class="template-button">
+                                <div class="text-sm font-semibold text-slate-100">D Size – with title block</div>
+                                <div class="text-xs text-slate-400 mt-1">3456 × 2304 px</div>
+                            </button>
+                            <button onclick="insertTemplate('d_arch_no')" class="template-button">
+                                <div class="text-sm font-semibold text-slate-100">D Size – no title block</div>
+                                <div class="text-xs text-slate-400 mt-1">3456 × 2304 px</div>
                             </button>
                         </div>
                     </div>
@@ -327,13 +344,14 @@
     </div>
 
     <div class="h-10 bg-slate-900/50 backdrop-blur border-t border-slate-700/50 px-8 flex items-center justify-between text-[11px] text-slate-500 font-mono">
-        <div class="flex-1">vibedraft v0.5</div>
+        <div class="flex-1">vibedraft v0.6</div>
     </div>
 
     <script>
         tailwind.config = { content: [] };
 
         let currentSVG = '', currentUnits = 'inches', zoomLevel = 1, isDragging = false, startPanX = 0, startPanY = 0, currentLogo = '';
+        let includeTitleBlock = true;
 
         const PaperSizes = {
             letter:  { landscape: {w:1056, h:816},  portrait: {w:816, h:1056} },
@@ -342,14 +360,39 @@
             custom:  { landscape: {w:1056, h:816},  portrait: {w:816, h:1056} }
         };
 
+        const TitleBlockHeight = {
+            letter:  140,
+            tabloid: 220,
+            arch_d:  480,
+            custom:  140
+        };
+
         function getCurrentOrientation() {
             return document.getElementById('meta-orientation')?.value || 'landscape';
+        }
+
+        function toggleTitleBlock() {
+            includeTitleBlock = document.getElementById('include-title-block').checked;
+            const fields = document.querySelectorAll('#project-info-section input, #project-info-section select');
+            fields.forEach(el => el.disabled = !includeTitleBlock);
+
+            updatePaperDimensions();
+            renderViewer();
         }
 
         function updatePaperDimensions() {
             const sizeKey = document.getElementById('paper-size')?.value || 'letter';
             const ori = getCurrentOrientation();
-            const dims = PaperSizes[sizeKey]?.[ori] || PaperSizes.letter.landscape;
+            let dims = PaperSizes[sizeKey]?.[ori] || PaperSizes.letter.landscape;
+
+            if (!includeTitleBlock) {
+                // Full height when title block is disabled
+                dims = { w: dims.w, h: dims.h };
+            } else {
+                // Reserve space at bottom for title block
+                const tbHeight = TitleBlockHeight[sizeKey] || 140;
+                dims = { w: dims.w, h: dims.h - tbHeight };
+            }
 
             document.getElementById('paper-width').value = dims.w;
             document.getElementById('paper-height').value = dims.h;
@@ -365,17 +408,18 @@
             reader.onload = e => {
                 currentLogo = e.target.result;
                 document.getElementById('logo-preview').innerHTML = `<img src="${currentLogo}" style="max-height:100%;max-width:100%;object-fit:contain;">`;
-                renderTitleBlock();
+                if (includeTitleBlock) renderTitleBlock();
             };
             reader.readAsDataURL(input.files[0]);
         }
 
         function validateRequired() {
+            if (!includeTitleBlock) return true;
             const title = document.getElementById('meta-title')?.value?.trim();
             const dwg = document.getElementById('meta-dwg')?.value?.trim();
             const rev = document.getElementById('meta-rev')?.value?.trim();
             if (!title || !dwg || !rev) {
-                alert('⚠️ Title, Drawing Number, and Revision are required.');
+                alert('⚠️ Title, Drawing Number, and Revision are required when title block is enabled.');
                 return false;
             }
             return true;
@@ -416,15 +460,27 @@
         };
 
         const Templates = {
-            a_letter: () => `<svg width="1056" height="816" viewBox="0 0 1056 816" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            a_letter_with: () => `<svg width="1056" height="676" viewBox="0 0 1056 676" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <rect x="32" y="32" width="992" height="612" rx="12" stroke="#111827" stroke-width="4"/>
+</svg>`,
+
+            a_letter_no: () => `<svg width="1056" height="816" viewBox="0 0 1056 816" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
   <rect x="32" y="32" width="992" height="752" rx="12" stroke="#111827" stroke-width="4"/>
 </svg>`,
 
-            b_tabloid: () => `<svg width="1632" height="1056" viewBox="0 0 1632 1056" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            b_tabloid_with: () => `<svg width="1632" height="836" viewBox="0 0 1632 836" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <rect x="44" y="44" width="1544" height="748" rx="16" stroke="#111827" stroke-width="4"/>
+</svg>`,
+
+            b_tabloid_no: () => `<svg width="1632" height="1056" viewBox="0 0 1632 1056" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
   <rect x="44" y="44" width="1544" height="968" rx="16" stroke="#111827" stroke-width="4"/>
 </svg>`,
 
-            d_arch: () => `<svg width="3456" height="2304" viewBox="0 0 3456 2304" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            d_arch_with: () => `<svg width="3456" height="1976" viewBox="0 0 3456 1976" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <rect x="88" y="88" width="3280" height="1800" rx="32" stroke="#111827" stroke-width="4"/>
+</svg>`,
+
+            d_arch_no: () => `<svg width="3456" height="2304" viewBox="0 0 3456 2304" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
   <rect x="88" y="88" width="3280" height="2128" rx="32" stroke="#111827" stroke-width="4"/>
 </svg>`
         };
@@ -441,12 +497,19 @@
             const c = document.getElementById('svg-container');
             if (c) c.innerHTML = currentSVG || '';
             updateSVGSize();
-            renderTitleBlock();
+
+            const titleBlockEl = document.getElementById('title-block');
+            if (titleBlockEl) {
+                titleBlockEl.style.display = includeTitleBlock ? 'grid' : 'none';
+            }
+
+            if (includeTitleBlock) renderTitleBlock();
             const ta = document.getElementById('code-text');
             if (ta) ta.value = currentSVG;
         }
 
         function renderTitleBlock() {
+            if (!includeTitleBlock) return;
             const t = document.getElementById('title-block');
             if (!t) return;
 
@@ -580,7 +643,7 @@ Request: ${desc}
 
 1. Open link
 2. Choose size from TEMPLATES tab
-3. Fill sidebar metadata
+3. Fill sidebar metadata (if using title block)
 4. Generate / paste drawing inside the frame
 5. Export SVG or PDF
 
@@ -591,7 +654,7 @@ Thanks!`;
 
         function copyGrokPrompt() {
             if (!currentSVG) return alert('Create or load a drawing first');
-            const p = `Refine this technical drawing. Keep the thin outer border and metadata comments. Improve layout, add proper dimensions and leaders. Return ONLY the updated SVG code.\n\n\`\`\`svg\n${currentSVG}\n\`\`\``;
+            const p = `Refine this technical drawing. Keep the thin outer border and metadata comments (if present). Improve layout, add proper dimensions and leaders. Return ONLY the updated SVG code.\n\n\`\`\`svg\n${currentSVG}\n\`\`\``;
             navigator.clipboard.writeText(p);
             alert('✓ Refinement prompt copied');
         }
@@ -658,14 +721,14 @@ Thanks!`;
 
         function newDrawing() {
             if (confirm('Start fresh? Current drawing will be replaced.')) {
-                currentSVG = Templates.a_letter();
+                currentSVG = includeTitleBlock ? Templates.a_letter_with() : Templates.a_letter_no();
                 renderViewer();
                 switchTab(0);
             }
         }
 
         function saveDrawing() {
-            if (!validateRequired()) return;
+            if (includeTitleBlock && !validateRequired()) return;
             const data = {
                 svg: currentSVG,
                 logo: currentLogo,
@@ -677,7 +740,8 @@ Thanks!`;
                     scale: document.getElementById('meta-scale')?.value || '',
                     drawnBy: document.getElementById('meta-drawn-by')?.value || '',
                     orientation: document.getElementById('meta-orientation')?.value || 'landscape',
-                    paperSize: document.getElementById('paper-size')?.value || 'letter'
+                    paperSize: document.getElementById('paper-size')?.value || 'letter',
+                    includeTitleBlock: includeTitleBlock
                 }
             };
             localStorage.setItem('vibedraft_current', JSON.stringify(data));
@@ -685,7 +749,8 @@ Thanks!`;
         }
 
         function exportSVG() {
-            if (!validateRequired() || !currentSVG) return;
+            if (includeTitleBlock && !validateRequired()) return;
+            if (!currentSVG) return alert('No drawing to export');
             const blob = new Blob([currentSVG], { type: 'image/svg+xml' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -695,7 +760,8 @@ Thanks!`;
         }
 
         async function exportPDF() {
-            if (!validateRequired() || !currentSVG) return alert('Missing required fields or no drawing');
+            if (includeTitleBlock && !validateRequired()) return alert('Missing required fields or no drawing');
+            if (!currentSVG) return alert('No drawing to export');
 
             const orientation = document.getElementById('meta-orientation')?.value === 'landscape' ? 'l' : 'p';
             let sizeKey = document.getElementById('paper-size')?.value || 'letter';
@@ -713,32 +779,36 @@ Thanks!`;
 
             let y = 12;
 
-            if (currentLogo) {
-                const img = new Image();
-                img.src = currentLogo;
-                await new Promise(r => img.onload = r);
+            // Metadata / title block area (only if enabled)
+            if (includeTitleBlock) {
+                if (currentLogo) {
+                    const img = new Image();
+                    img.src = currentLogo;
+                    await new Promise(r => img.onload = r);
 
-                let logoW = 40;
-                let logoH = logoW * (img.height / img.width);
-                if (logoH > 25) {
-                    logoH = 25;
-                    logoW = logoH * (img.width / img.height);
+                    let logoW = 40;
+                    let logoH = logoW * (img.height / img.width);
+                    if (logoH > 25) {
+                        logoH = 25;
+                        logoW = logoH * (img.width / img.height);
+                    }
+                    pdf.addImage(img, 'PNG', (pageWidth - logoW) / 2, y, logoW, logoH);
+                    y += logoH + 8;
                 }
-                pdf.addImage(img, 'PNG', (pageWidth - logoW) / 2, y, logoW, logoH);
-                y += logoH + 8;
+
+                pdf.setFontSize(20);
+                pdf.text(document.getElementById('meta-title')?.value || 'Technical Drawing', pageWidth / 2, y, { align: 'center' });
+                y += 10;
+                pdf.setFontSize(11);
+                pdf.text(`${document.getElementById('meta-dwg')?.value || '—'} • REV ${document.getElementById('meta-rev')?.value || '—'}`, pageWidth / 2, y, { align: 'center' });
+                y += 12;
+
+                pdf.setLineWidth(0.4);
+                pdf.line(15, y, pageWidth - 15, y);
+                y += 10;
             }
 
-            pdf.setFontSize(20);
-            pdf.text(document.getElementById('meta-title')?.value || 'Technical Drawing', pageWidth / 2, y, { align: 'center' });
-            y += 10;
-            pdf.setFontSize(11);
-            pdf.text(`${document.getElementById('meta-dwg')?.value || '—'} • REV ${document.getElementById('meta-rev')?.value || '—'}`, pageWidth / 2, y, { align: 'center' });
-            y += 12;
-
-            pdf.setLineWidth(0.4);
-            pdf.line(15, y, pageWidth - 15, y);
-            y += 10;
-
+            // Drawing area
             const wrapper = document.getElementById('svg-wrapper');
             const canvas = await html2canvas(wrapper, {
                 scale: 3,
@@ -786,7 +856,11 @@ Thanks!`;
                     });
                     if (d.meta.paperSize) {
                         document.getElementById('paper-size').value = d.meta.paperSize;
-                        updatePaperDimensions();
+                    }
+                    if (d.meta.includeTitleBlock !== undefined) {
+                        includeTitleBlock = d.meta.includeTitleBlock;
+                        document.getElementById('include-title-block').checked = includeTitleBlock;
+                        toggleTitleBlock();
                     }
                 }
                 renderViewer();
@@ -820,10 +894,15 @@ Thanks!`;
                         if (d.meta.paperSize) {
                             document.getElementById('paper-size').value = d.meta.paperSize;
                         }
+                        if (d.meta.includeTitleBlock !== undefined) {
+                            includeTitleBlock = d.meta.includeTitleBlock;
+                            document.getElementById('include-title-block').checked = includeTitleBlock;
+                            toggleTitleBlock();
+                        }
                     }
                 } catch (_) {}
             } else {
-                currentSVG = Templates.a_letter();
+                currentSVG = Templates.a_letter_with();
             }
 
             updatePaperDimensions();
@@ -861,5 +940,3 @@ Thanks!`;
     </script>
 </body>
 </html>
-
-
