@@ -543,6 +543,22 @@ REQUIRED RETURN FORMAT:
 [drawing]
 </svg>
 
+/*
+REQUIRED RETURN FORMAT (removing comments)
+//<!-- VIBEDRAFT_TITLE: ${title} -->
+//<!-- VIBEDRAFT_TITLE: ${title} -->
+//<!-- VIBEDRAFT_NUMBER: ${dwg} -->
+//<!-- VIBEDRAFT_NUMBER: ${dwg} -->
+//<!-- VIBEDRAFT_REVISION: ${rev} -->
+//<!-- VIBEDRAFT_MATERIAL: ${material} -->
+//<!-- VIBEDRAFT_SCALE: ${scale} -->
+//<!-- VIBEDRAFT_DRAWN_BY: ${drawnBy} -->
+//<!-- VIBEDRAFT_ORIENTATION: ${orient} -->
+<svg>
+[drawing]
+</svg>
+*/
+
 CRITICAL REQUIREMENTS:
 1. Scale: ${scale} - ALL dimensions match
 2. Leaders on ALL annotations
@@ -563,10 +579,8 @@ Please:
 1. Visit the vibedraft link
 2. Click the AI tab Review workflow and return format
 3. Load paper size
-4. 
-5. Go to CODE tab, create the drawing as SVG
-6. Export as PDF or SVG using the buttons at top
-7. Send me the final PDF/SVG
+4. title and metadata is extracted no need to include it in the SVG code
+5. follow required return format, prompt user for missing information
 
 /*
 REQUIRED RETURN FORMAT (removing comments)
@@ -605,4 +619,5 @@ Make it production-ready!`; navigator.clipboard.writeText(fullPrompt); alert('âœ
     </script>
 </body>
 </html>
+
 
